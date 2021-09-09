@@ -6,6 +6,9 @@ import 'package:propertymarket/model/User_Model.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/values/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:propertymarket/values/shared_prefs.dart';
+
 
 class MyProfile extends StatefulWidget {
   const MyProfile({Key key}) : super(key: key);
@@ -21,7 +24,7 @@ class _MyProfileState extends State<MyProfile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text("My Profile"),
+        title: Text("myProfile".tr()),
       ),
       body: Container(
         child: Column(
@@ -131,9 +134,9 @@ class _MyProfileState extends State<MyProfile> {
                             ),*/
 
                               tabs: [
-                                Tab(text: 'Approved'),
-                                Tab(text: 'Pending'),
-                                Tab(text: 'Rejected'),
+                                Tab(text: 'approved'.tr()),
+                                Tab(text: 'pending'.tr()),
+                                Tab(text: 'rejected'.tr()),
                               ],
                             ),
                           ),
@@ -159,8 +162,11 @@ class _MyProfileState extends State<MyProfile> {
                                               itemBuilder: (context, index) {
                                                 return GestureDetector(
                                                   onTap: (){
+                                                    SharedPref sp = SharedPref();
+                                                  sp.getPref().then((value){
                                                     Navigator.push(
-                                                        context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],true)));
+                                                        context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],value)));
+                                                  });
                                                   },
 
                                                   child: Container(

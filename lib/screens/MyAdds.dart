@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:propertymarket/admin/admin_property_detail_view.dart';
 import 'package:propertymarket/model/property.dart';
-import 'package:propertymarket/navigator/menu_drawer.dart';
 import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
-import 'package:propertymarket/widget/property_tile.dart';
+import 'package:easy_localization/easy_localization.dart';
 class MyAdds extends StatefulWidget {
 
   @override
@@ -262,7 +260,7 @@ class _MyAddsState extends State<MyAdds> {
           key: _drawerKey,*/
           appBar: AppBar(
             backgroundColor: primaryColor,
-            title: Text("My Adds"),
+            title: Text("myAdds".tr()),
           ),
           backgroundColor: Color(0xfff2f8fc),
           body: Container(
@@ -287,9 +285,9 @@ class _MyAddsState extends State<MyAdds> {
                             ),*/
 
                               tabs: [
-                                Tab(text: 'Approved'),
-                                Tab(text: 'Pending'),
-                                Tab(text: 'Rejected'),
+                                Tab(text: 'approved'.tr()),
+                                Tab(text: 'pending'.tr()),
+                                Tab(text: 'rejected'.tr()),
                               ],
                             ),
                           ),
@@ -316,8 +314,12 @@ class _MyAddsState extends State<MyAdds> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                 onTap: (){
-                                                  Navigator.push(
-                                                      context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],true)));
+                                                  SharedPref sp = SharedPref();
+                                                  sp.getPref().then((value){
+                                                    Navigator.push(
+                                                        context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],value)));
+                                                  });
+
                                                 },
 
                                                 child: Container(

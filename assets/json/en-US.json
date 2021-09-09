@@ -86,7 +86,18 @@
   "all": "All",
   "to": "To",
   "from": "From",
-  "privacy": "Privacy Policy & Support"
+  "privacy": "Privacy Policy & Support",
+  "myProfile" : "My Profile",
+  "myAdds" : "My Adds",
+  "myChat" : "My Chat",
+  "contactAdmin" : "Contact Admin",
+  "notification" : "Notification",
+  "approved" : "Approved",
+  "pending" : "Pending",
+  "rejected" : "Rejected",
+  "typeYourMessage" : "Type your message...",
+  "Notify" : "Notify",
+  "myNotification" :  "My Notification"
 
 
 }

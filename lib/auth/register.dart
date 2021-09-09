@@ -104,15 +104,7 @@ class _RegisterState extends State<Register> {
                         InkWell(
                           onTap: (){
                             _showPicker(context);
-                            /*if(_progress == false){
 
-                              imageUrl = "assets/images/profile.jpg" ;
-                            }
-                            else if (_progress != true) {
-                                imageUrl = photoUrl.toString() ;
-
-                              }
-                              Toast.show("Image Uploading", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);        */
                             },
                           child: photoUrl==""?Center(
                             child: Container(

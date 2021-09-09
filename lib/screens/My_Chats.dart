@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:propertymarket/model/PeerUser_Model.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MyChats extends StatefulWidget {
   const MyChats({Key key}) : super(key: key);
@@ -44,7 +45,7 @@ class _MyChatsState extends State<MyChats> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         title: Text(
-          'My Chats',
+          'myChat'.tr(),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -58,9 +59,9 @@ class _MyChatsState extends State<MyChats> {
                 stream: FirebaseFirestore.instance
                     .collection('users')
                     .where(
-                      "id",
-                      arrayContains: uId,
-                    )
+                  "id",
+                  arrayContains: uId,
+                )
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -83,28 +84,31 @@ class _MyChatsState extends State<MyChats> {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
                       itemBuilder: (context, index) {
-                        print("user Id $uId");
+                         print("user Id $uId");
                         print("yes user has data ");
                         DocumentSnapshot document =  snapshot.data?.docs[index];
-                        id = List.from(document['id']);
-                        if (id[0] == uId) {
-                          peerId = id[1];
-                          print("user Id  :$uId");
-                          print("Peer Id : $peerId");
-                          return buildItem(context, snapshot.data?.docs[index]);
 
-                        } else if (id[1] == uId) {
-                          peerId = id[0];
-                          print("user Id  :$uId");
-                          print("Peer Id : $peerId");
-                          return buildItem(context, snapshot.data?.docs[index]);
+                        id = List.from(document.get('id'));
+                        if (id[0] == uId) {
+                        peerId = id[1];
+                        print("user Id  :$uId");
+                        print("Peer Id : $peerId");
+                        return buildItem(context, snapshot.data?.docs[index]);
+
+
+                        } else
+                        if (id[1] == uId) {
+                        peerId = id[0];
+                        print("user Id  :$uId");
+                        print("Peer Id : $peerId");
+                        return buildItem(context, snapshot.data?.docs[index]);
+
 
                         }
                         else
                           {
                             return null;
                           }
-
                       },
                       itemCount: snapshot.data?.docs.length,
                       controller: listScrollController,
@@ -143,17 +147,34 @@ class _MyChatsState extends State<MyChats> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: () => {
+        onTap: () =>
+        {
           print(document.get('id')),
           print(document.id),
+          id = List.from(document.get('id')),
+          if (id[0] == uId) {
+            peerId = id[1],
+            print("user Id  :$uId"),
+            print("Peer Id : $peerId"),
 
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) =>
-                          Chat(peerId: peerId, name: "Chat" ))),
+          } else
+            if (id[1] == uId) {
+              peerId = id[0],
+              print("user Id  :$uId"),
+              print("Peer Id : $peerId"),
 
-        },
+            },
+
+        FirebaseDatabase.instance.reference().child("userData").child(peerId).once().then((DataSnapshot peerSnapshot){
+        Navigator.push(
+        context,
+        new MaterialPageRoute(
+        builder: (context) =>
+        Chat(peerId: peerId, name: peerSnapshot.value['username'])));
+        }
+
+
+        )},
         child: FutureBuilder<List<PeerUser>>(
           future: userData(),
           builder: (context, snapshot) {
@@ -171,32 +192,32 @@ class _MyChatsState extends State<MyChats> {
                           color: Colors.grey.shade300,
                         ),
                         child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(7.0),
-                                  child: Container(
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.grey,
-                                        border: Border.all(color: Colors.grey),
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              snapshot.data[index].profilePic),
-                                          fit: BoxFit.contain,
-                                        )),
-                                  ),
-                                ),
-                                Text(
-                                  snapshot.data[index].username,
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.grey.shade800,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Container(
+                                width: 100,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey,
+                                    border: Border.all(color: Colors.grey),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          snapshot.data[index].profilePic),
+                                      fit: BoxFit.contain,
+                                    )),
+                              ),
                             ),
+                            Text(
+                              snapshot.data[index].username,
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     });
               } else {
@@ -239,7 +260,7 @@ class _MyChatsState extends State<MyChats> {
             DATA[individualKey]["id"],
           );
 
-            list.add(peerUser);
+          list.add(peerUser);
         }
       }
     });

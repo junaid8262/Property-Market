@@ -86,5 +86,17 @@
   "all": "الكل",
   "to": "الى",
   "from": "من",
-  "privacy":"سياسة الخصوصية و الدعم"
+  "privacy":"سياسة الخصوصية و الدعم",
+  "myProfile" : "ملفي",
+  "myAdds" : "إضافاتي",
+  "myChat" : "دردشاتي",
+  "contactAdmin" : "اتصل بالمسؤول",
+  "notification" : "تنبيه",
+  "approved" : "وافق",
+  "pending" : "ريثما",
+  "rejected" : "مرفوض",
+  "typeYourMessage" : "اكتب رسالتك ...",
+  "Notify" : "يخطر",
+  "myNotification" :  "إخطاري"
+
 }

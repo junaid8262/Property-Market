@@ -141,6 +141,7 @@ class _HomePageState extends State<HomePage> {
   String engArea="";
   String engType="";
 
+
   String arCountry="";
   String arCity="";
   String arArea="";

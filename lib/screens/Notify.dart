@@ -1,10 +1,18 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:lottie/lottie.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:propertymarket/model/User_Notificactions.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Notify extends StatefulWidget {
   const Notify({Key key}) : super(key: key);
@@ -16,7 +24,12 @@ class Notify extends StatefulWidget {
 class _NotifyState extends State<Notify> {
   SharedPref sharedPref=new SharedPref();
   final _scrollController = ScrollController();
+  final ScrollController listScrollController = ScrollController();
 
+
+  String userid;
+  var rng = new Random();
+  var notificationId ;
   String selectedCountryId="";
   String selectedCityId="";
   String selectedAreaId="";
@@ -40,7 +53,7 @@ class _NotifyState extends State<Notify> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         title: Text(
-          'Notification',
+          'notification'.tr(),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -91,7 +104,12 @@ class _NotifyState extends State<Notify> {
             SizedBox(height: 10,),
             InkWell(
               onTap: ()async{
-              if(selectedCityId!=null && selectedCountryId!=null && selectedAreaName!=null ) {
+              if(selectedCityId!=null  && selectedCityId!="" && selectedCountryId!=null && selectedCountryId!=""  && selectedAreaName!=null  && selectedAreaName!="") {
+                randNumber();
+                makeNotificationRequest().whenComplete(() {
+                  setState(() {
+                  });
+                });
 
               }
 
@@ -117,12 +135,139 @@ class _NotifyState extends State<Notify> {
                 child: Text('Notify'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 20),),
               ),
             ),
+
+            SizedBox(height: 10,),
+            Container(
+              height: MediaQuery.of(context).size.height*0.4,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      child: Text("myNotification".tr(),style: TextStyle(
+                        fontSize: 20,
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold
+                      ),),
+                    ),
+                  ),
+                  Container(
+                    color: primaryColor,
+                    height: 1.5,
+                    width: MediaQuery.of(context).size.width*0.4,
+                  ),
+                  Container(
+                    height: 7,
+                  ),
+                  Container(
+                     height: MediaQuery.of(context).size.height*0.3,
+
+        child: FutureBuilder<List<UserNotificationModel>>(
+                      future: getUserNotifications(),
+                      builder: (context,snapshot){
+                        if (snapshot.hasData ) {
+                          if (snapshot.data != null && snapshot.data.length>0  ) {
+                            print(userid);
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    height: MediaQuery.of(context).size.height*0.08,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(10.0),
+                                              child: Text(snapshot.data[index].country + " , " + snapshot.data[index].city + " , " + snapshot.data[index].area ,style: TextStyle(
+                                                fontSize: 14
+                                              ),),
+                                            ),
+                                            IconButton(onPressed:()async{
+                                              FirebaseDatabase.instance.reference()
+                                                  .child('userNotification')
+                                                  .orderByChild('notificationId')
+                                                  .equalTo(snapshot.data[index].notificationId)
+                                                  .once()
+                                                  .then((DataSnapshot snapshot) {
+                                                Map<dynamic, dynamic> children = snapshot.value;
+                                                children.forEach((key, value) {
+                                                  FirebaseDatabase.instance.reference()
+                                                      .child('userNotification')
+                                                      .child(key)
+                                                      .remove();
+                                                });
+                                              }).whenComplete(()  {
+                                              setState(() {
+                                              });
+                                              });
+
+
+                                            }, icon: Icon(Icons.delete,color: Colors.red,))
+                                          ],
+                                        ),
+                                        Container(
+                                          height: 1,
+                                          width: MediaQuery.of(context).size.width*0.87,
+                                          color: Colors.black54,
+                                        )
+                                      ],
+                                    )
+                                  );
+                                });
+                          }
+                          else {
+                            print("user id :$userid");
+
+                            return new Center(
+                              child: Container(
+                                  child: Text("No Notification Request")
+                              ),
+                            );
+                          }
+                        }
+                        else if (snapshot.hasError) {
+
+                          return Text('Error : ${snapshot.error}');
+                        } else {
+
+                          return new Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+            )
           ],
         ),
       ),
 
 
     );
+  }
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  void getUid() {
+    final User user = auth.currentUser;
+    userid = user.uid;
+    // here you write the codes to input the data into firestore
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUid();
   }
 
   Future<List<LocationModel>> getCountryList() async {
@@ -573,4 +718,54 @@ class _NotifyState extends State<Notify> {
       },
     );
   }
+
+  Future<void> makeNotificationRequest() async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.show();
+    final databaseReference = FirebaseDatabase.instance.reference();
+    User user=FirebaseAuth.instance.currentUser;
+
+    databaseReference.child("userNotification").push().set({
+      'userid' : user.uid.toString(),
+      'country': selectedCountryName,
+      'city' : selectedCityName,
+      'area': selectedAreaName,
+      'notificationId' : notificationId,
+    }).whenComplete(() => pr.hide());
+  }
+
+  Future<List<UserNotificationModel>> getUserNotifications() async {
+    List<UserNotificationModel> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("userNotification").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          UserNotificationModel userNotificationModel = new UserNotificationModel(
+            DATA[individualKey]['userid'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['notificationId'],
+
+          );
+          if(DATA[individualKey]['userid']==userid)
+            {
+              list.add(userNotificationModel);
+
+            }
+        }
+      }
+    });
+    return list;
+  }
+
+  String randNumber()
+  {
+    return notificationId = rng.nextInt(100000).toString();
+  }
+
+
 }

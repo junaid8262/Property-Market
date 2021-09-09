@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Chat extends StatelessWidget {
   final String peerId ,name;
@@ -92,6 +97,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
 
+
+
   final CollectionReference userDetails =
   FirebaseFirestore.instance.collection('users');
 
@@ -118,6 +125,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+
   @override
   void initState() {
     id = getUid();
@@ -126,6 +134,7 @@ class ChatScreenState extends State<ChatScreen> {
     listScrollController.addListener(_scrollListener);
     readLocal();
     bothUser = [peerId,id];
+    getToken();
   }
 
   void onFocusChange() {
@@ -219,9 +228,47 @@ class ChatScreenState extends State<ChatScreen> {
         );
       });
       listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+     // var token;
+      FirebaseDatabase.instance.reference().child("userData").child(peerId).once().then((DataSnapshot peerSnapshot){
+        FirebaseDatabase.instance.reference().child("userData").child(id).once().then((DataSnapshot userSnapshot){
+          sendNotification(peerSnapshot.value['token'] , userSnapshot.value['username'] );
+          print("user name : ${userSnapshot.value['username']} ");
+          print("token is : ${peerSnapshot.value['token'] }");
+
+        });
+      });
+
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: Colors.black, textColor: Colors.red);
     }
+  }
+
+
+  sendNotification(String token, String senderName) async{
+    String url='https://fcm.googleapis.com/fcm/send';
+    Uri myUri = Uri.parse(url);
+    await http.post(
+      myUri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverToken',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'You Have Recived A Message From $senderName',
+            'title': 'A New Message'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          'to': '$token',
+        },
+      ),
+    );
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {
@@ -646,7 +693,7 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextStyle(color: primaryColor, fontSize: 15.0),
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
+                  hintText: 'typeYourMessage'.tr(),
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 focusNode: focusNode,
@@ -712,6 +759,18 @@ class ChatScreenState extends State<ChatScreen> {
             ),
     );
   }
+
+
+  String token;
+  getToken() async {
+    token = await FirebaseMessaging.instance.getToken();
+    setState(() {
+      token = token;
+    });
+    print(token);
+  }
+
+
 }
 
 class FullPhoto extends StatelessWidget {

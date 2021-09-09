@@ -160,15 +160,25 @@ class MenuDrawerState extends State<MenuDrawer> {
           SizedBox(height: 30,),
           InkWell(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => MyProfile()));
+              User user=FirebaseAuth.instance.currentUser;
+              if(user == null)
+                {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => Login()));
+                }
+              else
+                {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => MyProfile()));
+                }
+
             },
             child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.person, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text("My Profile",)),
+                  Expanded(child: Text("myProfile".tr(),)),
                 ],
               ),
             ),
@@ -177,15 +187,26 @@ class MenuDrawerState extends State<MenuDrawer> {
           SizedBox(height: 10,),
           InkWell(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => MyAdds()));
+
+              User user=FirebaseAuth.instance.currentUser;
+              if(user == null)
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login()));
+              }
+              else
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => MyAdds()));
+              }
+
             },
             child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.receipt, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text("My Adds",)),
+                  Expanded(child: Text("myAdds".tr(),)),
                 ],
               ),
             ),
@@ -194,15 +215,25 @@ class MenuDrawerState extends State<MenuDrawer> {
           SizedBox(height: 10,),
           InkWell(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => MyChats()));
+              User user=FirebaseAuth.instance.currentUser;
+              if(user == null)
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login()));
+              }
+              else
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => MyChats()));
+              }
+
             },
             child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.chat_sharp, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text("My Chats",)),
+                  Expanded(child: Text("myChat".tr(),)),
                 ],
               ),
             ),
@@ -211,15 +242,25 @@ class MenuDrawerState extends State<MenuDrawer> {
           SizedBox(height: 10,),
           InkWell(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => Chat(peerId: adminId,name: "Admin",)));
+              User user=FirebaseAuth.instance.currentUser;
+              if(user == null)
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login()));
+              }
+              else
+              {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Chat(peerId: adminId,name: "Admin",)));
+              }
+
             },
             child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.admin_panel_settings, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text("Contact Admin",)),
+                  Expanded(child: Text('contactAdmin'.tr(),)),
                 ],
               ),
             ),
@@ -236,7 +277,7 @@ class MenuDrawerState extends State<MenuDrawer> {
                 children: <Widget>[
                   Icon(Icons.notifications, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text("Notification",)),
+                  Expanded(child: Text('notification'.tr(),)),
                 ],
               ),
             ),
