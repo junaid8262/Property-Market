@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:date_format/date_format.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:image_picker/image_picker.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/model/User_Model.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
-
+import 'package:toast/toast.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({Key key}) : super(key: key);
@@ -18,6 +24,9 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
+
+  String token , username , email , userID ;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -48,20 +57,45 @@ class _MyProfileState extends State<MyProfile> {
                             return Column(
                               children: [
 
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Container(
-                                      height: 90,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.grey,
-                                          border: Border.all(color: Colors.grey),
-                                          image: DecorationImage(
-                                            image: NetworkImage(snapshot.data[index].profilePic),
-                                            fit: BoxFit.contain,
-                                          )
+                                Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Container(
+                                        height: 90,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.grey,
+                                            border: Border.all(color: Colors.grey),
+                                            image: DecorationImage(
+                                              image: NetworkImage(snapshot.data[index].profilePic),
+                                              fit: BoxFit.contain,
+                                            )
+                                        ),
                                       ),
                                     ),
+                                    Positioned(
+                                      top : 80 ,
+                                        left : 220,
+                                        child:  InkWell(
+                                          onTap : (){
+                                            token = snapshot.data[index].token;
+                                            username = snapshot.data[index].username;
+                                            email = snapshot.data[index].email;
+                                            userID = snapshot.data[index].id;
+                                            _showPicker(context);
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.edit,color: Colors.white,size: 20,),
+                                              Text("Edit",style: TextStyle(
+                                                color: Colors.white,
+                                              ),)
+                                            ],
+                                          ),
+                                        ),
+                                    )
+                                  ],
                                 ),
 
                                 Divider(
@@ -95,7 +129,7 @@ class _MyProfileState extends State<MyProfile> {
                     else {
                       return new Center(
                         child: Container(
-                            child: Text("no data")
+                            child: Text("noData".tr())
                         ),
                       );
                     }
@@ -240,7 +274,7 @@ class _MyProfileState extends State<MyProfile> {
                                         else {
                                           return new Center(
                                             child: Container(
-                                                child: Text("no data")
+                                                child: Text("noData".tr())
                                             ),
                                           );
                                         }
@@ -345,7 +379,7 @@ class _MyProfileState extends State<MyProfile> {
                                         else {
                                           return new Center(
                                             child: Container(
-                                                child: Text("no data")
+                                                child: Text("noData".tr())
                                             ),
                                           );
                                         }
@@ -450,7 +484,7 @@ class _MyProfileState extends State<MyProfile> {
                                         else {
                                           return new Center(
                                             child: Container(
-                                                child: Text("no data")
+                                                child: Text("noData".tr())
                                             ),
                                           );
                                         }
@@ -737,6 +771,98 @@ class _MyProfileState extends State<MyProfile> {
       }
     });
     return list;
+  }
+
+  File imageFiles;
+  File imagefile;
+  String photoUrl="";
+  bool _progress = false ;
+
+
+  Future uploadImageToFirebase(BuildContext context) async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.show();
+    firebase_storage.Reference firebaseStorageRef = firebase_storage.FirebaseStorage.instance.ref().child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(imagefile);
+    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
+    taskSnapshot.ref.getDownloadURL().then(
+          (value) {
+        photoUrl=value;
+        print("value $value");
+        setState(() {
+          _progress = true;
+          pr.hide();
+          print("user id : $userID");
+                final databaseReference = FirebaseDatabase.instance.reference();
+                databaseReference.child("userData").child(userID).set({
+                  'token':token,
+                  'id' : userID,
+                  'email': email,
+                  'username' : username,
+                  'profile': photoUrl,
+                }).then((value)
+                {
+                  setState(() {
+
+                  });
+                });
+
+
+
+        });
+
+      },
+    ).onError((error, stackTrace){
+      Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+    });
+  }
+
+  void fileSet(File file){
+    setState(() {
+      if(file!=null){
+        imagefile=file;
+      }
+    });
+    uploadImageToFirebase(context);
+  }
+  Future<File> _chooseGallery() async{
+    await ImagePicker().getImage(source: ImageSource.gallery).then((value) => fileSet(File(value.path)));
+
+  }
+  Future<File> _choosecamera() async{
+    await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
+
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _chooseGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _choosecamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
   }
 
 }

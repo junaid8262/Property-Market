@@ -1,3 +1,5 @@
+import 'package:propertymarket/auth/Facebook_SignIn.dart';
+import 'package:toast/toast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/admin/admin_home.dart';
 import 'package:propertymarket/admin/admin_search_list.dart';
@@ -11,6 +13,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'Google_SignIn.dart';
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -112,8 +116,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                         FormError(errors: errors),
-                        SizedBox(height: 20),
-                        SizedBox(height:10),
+                        SizedBox(height: 10),
                         GestureDetector(
                           onTap: () async{
                             if (_formKey.currentState.validate()) {
@@ -125,31 +128,34 @@ class _LoginState extends State<Login> {
                                     email: email,
                                     password: password
                                 ).whenComplete(() {
-                                  FirebaseAuth.instance.authStateChanges().listen((User user) {
-                                    if (user == null) {
-                                      print('User is currently signed out!');
+                                  User user=FirebaseAuth.instance.currentUser;
+                                  if (user == null) {
+                                    print('User is currently signed out!');
+                                    Toast.show("User Not Registered", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
+                                    pr.hide();
+                                  } else {
+                                    print('User is signed in!');
+                                    if(user.uid==adminId){
                                       pr.hide();
-                                    } else {
-                                      print('User is signed in!');
-                                      if(user.uid==adminId){
-                                        pr.hide();
-                                        Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: AdminSearchList()));
-                                      }
-                                      else{
-                                        pr.hide();
-                                        Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar()));
-
-                                      }
+                                      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: AdminSearchList()));
+                                    }
+                                    else{
+                                      pr.hide();
+                                      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar()));
 
                                     }
-                                  });
+
+                                  }
                                 });
                               } on FirebaseAuthException catch (e) {
                                 if (e.code == 'user-not-found') {
                                   pr.hide();
+                                  Toast.show("User Not Registered", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
+
                                   print('No user found for that email.');
                                 } else if (e.code == 'wrong-password') {
                                   pr.hide();
+                                  Toast.show("Wrong Password", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
                                   print('Wrong password provided for that user.');
                                 }
                               }
@@ -185,7 +191,21 @@ class _LoginState extends State<Login> {
                         child: Text('signup'.tr(),style: TextStyle(color: primaryColor),),
                       )
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        FacebookSignIn(),
+                        GoogleSignin(),
+
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

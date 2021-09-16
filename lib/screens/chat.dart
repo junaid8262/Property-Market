@@ -7,14 +7,19 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' ;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:record_mp3/record_mp3.dart';
+import 'package:just_audio/just_audio.dart';
 
 class Chat extends StatelessWidget {
   final String peerId ,name;
@@ -65,10 +70,15 @@ class ChatScreenState extends State<ChatScreen> {
   bool isShowSticker = false;
   String imageUrl = "";
   List bothUser = ["" , ""];
+  int unseenMessageNo ;
+  String recordFilePath;
+  int i = 0;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
+  bool isPlayingMsg = false, isRecording = false, isSending = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +215,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void onSendMessage(String content, int type) {
-    // type: 0 = text, 1 = image, 2 = sticker
+    // type: 0 = text, 1 = image, 2 = audio
     if (content.trim() != '') {
       textEditingController.clear();
 
@@ -227,7 +237,15 @@ class ChatScreenState extends State<ChatScreen> {
           },
         );
       });
+
+      // it increments the unseen message
+      unseenMessageIncrementer();
+
+      // user for my chats set
+      setUser();
+
       listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+
      // var token;
       FirebaseDatabase.instance.reference().child("userData").child(peerId).once().then((DataSnapshot peerSnapshot){
         FirebaseDatabase.instance.reference().child("userData").child(id).once().then((DataSnapshot userSnapshot){
@@ -238,11 +256,48 @@ class ChatScreenState extends State<ChatScreen> {
         });
       });
 
+
+
+
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: Colors.black, textColor: Colors.red);
     }
   }
 
+  CollectionReference users = FirebaseFirestore.instance.collection('unseen Message');
+
+  Future unseenMessageIncrementer() async{
+    users.doc(peerId).collection('unseen Message').doc(id).get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+        unseenMessageNo = data['unseen'] ;
+      }
+      else
+        {
+          unseenMessageNo = 0 ;
+        }
+    }).then((value) => {
+      users.doc(peerId).collection('unseen Message').doc(id).set({
+      'unseen': unseenMessageNo+1, // id of sender at that point
+    })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"))
+    });
+
+
+  }
+
+  Future unseenMessageSeen() async{
+    users.doc(id).collection('unseen Message').doc(peerId).get().then((DocumentSnapshot documentSnapshot) {
+      if(documentSnapshot.exists)
+        {
+          users.doc(id).collection('unseen Message').doc(peerId).update({
+            'unseen': 0,
+          });
+        }
+    });
+
+  }
 
   sendNotification(String token, String senderName) async{
     String url='https://fcm.googleapis.com/fcm/send';
@@ -354,15 +409,41 @@ class ChatScreenState extends State<ChatScreen> {
                         margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
                       )
                     // Sticker
-                    : Container(
-                        child: Image.asset(
-                          'images/${document.get('content')}.gif',
-                          width: 100.0,
-                          height: 100.0,
-                          fit: BoxFit.cover,
+                    : Padding(
+              padding: EdgeInsets.only(top: 8,left:  64 , right:  10 ),
+              child: Container(
+                width: 200.0,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color:  Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: GestureDetector(
+                    onTap: () {
+                      _loadFile(document.get('content'));
+                    },
+                    onSecondaryTap: () {
+                      stopRecord();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow ,color : Colors.black),
+                            Text(
+                              'Audio',
+                              maxLines: 10,style : TextStyle (
+                              color  : Colors.black,
+                            )
+                            ),
+                          ],
                         ),
-                        margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-                      ),
+                      ],
+                    )),
+              ),
+            )
           ],
           mainAxisAlignment: MainAxisAlignment.end,
         );
@@ -474,15 +555,41 @@ class ChatScreenState extends State<ChatScreen> {
                               ),
                               margin: EdgeInsets.only(left: 10.0),
                             )
-                          : Container(
-                              child: Image.asset(
-                                'images/${document.get('content')}.gif',
-                                width: 100.0,
-                                height: 100.0,
-                                fit: BoxFit.cover,
+                          : Padding(
+                    padding: EdgeInsets.only(top: 8,left:  10 , right:  64 ),
+                    child: Container(
+                      width: 200.0,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: GestureDetector(
+                          onTap: () {
+                            _loadFile(document.get('content'));
+                          },
+                          onSecondaryTap: () {
+                            stopRecord();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow  ,color: Colors.white,),
+                                  Text(
+                                    'Audio',
+                                    maxLines: 10,style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  ),
+                                ],
                               ),
-                              margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-                            ),
+                            ],
+                          )),
+                    ),
+                  )
                 ],
               ),
 
@@ -671,19 +778,66 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             color: Colors.white,
           ),
-       /*   Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(
-                icon: Icon(Icons.face),
-                onPressed: getSticker,
-                color: Colors.purple,
-              ),
+/*
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,6,0),
+            child: GestureDetector(
+              onLongPress: () {
+                startRecord();
+                setState(() {
+                  isRecording = true;
+                });
+              },
+              onLongPressEnd: (details) {
+                stopRecord();
+                setState(() {
+                  isRecording = false;
+                });
+              },
+              child: Icon(Icons.mic , color: primaryColor,),
             ),
-            color: Colors.white,
-          ),*/
+          ),
+*/
+          Container(
+              height: 30,
+              margin: EdgeInsets.fromLTRB(0, 5, 10, 5),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: isRecording
+                        ? Colors.white
+                        : Colors.black12,
+                    spreadRadius: 4)
+              ], color: primaryColor, shape: BoxShape.circle),
+              child: GestureDetector(
+                onLongPress: () {
+                  startRecord();
+                  setState(() {
+                    isRecording = true;
+                  });
+                },
+                onLongPressEnd: (details) {
+                  stopRecord();
+                  setState(() {
+                    isRecording = false;
+                  });
+                },
+                child: Container(
+                    padding: EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.mic,
+                      color: Colors.white,
+                      size: 20,
+                    )),
+              )),
+
 
           // Edit text
+          isRecording ? Flexible(
+            child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text("Recording ...", style: TextStyle(color: primaryColor, fontSize: 18.0),)
+            ),
+          ) :
           Flexible(
             child: Container(
               child: TextField(
@@ -735,7 +889,7 @@ class ChatScreenState extends State<ChatScreen> {
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   listMessage.addAll(snapshot.data.docs);
-                  setUser();
+                  unseenMessageSeen();
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) => buildItem(index, snapshot.data?.docs[index]),
@@ -759,7 +913,33 @@ class ChatScreenState extends State<ChatScreen> {
             ),
     );
   }
+  Future _loadFile(String url) async {
+    final bytes = await readBytes(Uri.parse(url));
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/audio.mp3');
 
+    await file.writeAsBytes(bytes);
+    if (await file.exists()) {
+      setState(() {
+        recordFilePath = file.path;
+        isPlayingMsg = true;
+        print(isPlayingMsg);
+      });
+      await play();
+      setState(() {
+        isPlayingMsg = false;
+        print(isPlayingMsg);
+      });
+    }
+  }
+  Future<void> play() async {
+    if (recordFilePath != null && File(recordFilePath).existsSync()) {
+      AudioPlayer audioPlayer = AudioPlayer();
+      await audioPlayer.setUrl(recordFilePath);
+      await audioPlayer.play();
+
+    }
+  }
 
   String token;
   getToken() async {
@@ -769,6 +949,71 @@ class ChatScreenState extends State<ChatScreen> {
     });
     print(token);
   }
+
+  Future<bool> checkPermission() async {
+    if (!await Permission.microphone.isGranted) {
+      PermissionStatus status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void startRecord() async {
+    bool hasPermission = await checkPermission();
+    if (hasPermission) {
+      recordFilePath = await getFilePath();
+
+      RecordMp3.instance.start(recordFilePath, (type) {
+        setState(() {});
+      });
+    } else {}
+    setState(() {});
+  }
+
+  void stopRecord() async {
+    bool s = RecordMp3.instance.stop();
+    if (s) {
+      setState(() {
+        isSending = true;
+      });
+      await uploadAudio();
+
+      setState(() {
+        isPlayingMsg = false;
+      });
+    }
+  }
+
+  Future<String> getFilePath() async {
+    Directory storageDirectory = await getApplicationDocumentsDirectory();
+    String sdPath = storageDirectory.path + "/record";
+    var d = Directory(sdPath);
+    if (!d.existsSync()) {
+      d.createSync(recursive: true);
+    }
+    return sdPath + "/test_${i++}.mp3";
+  }
+
+  uploadAudio() {
+    final Reference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child(
+        'profilepics/audio${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
+
+    UploadTask task = firebaseStorageRef.putFile(File(recordFilePath));
+    task.then((value) async {
+      print('##############done#########');
+      var audioURL = await value.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      await onSendMessage(strVal ,2);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+
 
 
 }
@@ -818,7 +1063,6 @@ class FullPhotoScreenState extends State<FullPhotoScreen> {
     return Container(child: PhotoView(imageProvider: NetworkImage(url)));
   }
 }
-
 
 class Loading extends StatelessWidget {
   const Loading();

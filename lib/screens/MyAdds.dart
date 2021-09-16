@@ -393,7 +393,7 @@ class _MyAddsState extends State<MyAdds> {
                                       else {
                                         return new Center(
                                           child: Container(
-                                              child: Text("no data")
+                                              child: Text("noData".tr())
                                           ),
                                         );
                                       }
@@ -499,7 +499,7 @@ class _MyAddsState extends State<MyAdds> {
                                       else {
                                         return new Center(
                                           child: Container(
-                                              child: Text("no data")
+                                              child: Text("noData".tr())
                                           ),
                                         );
                                       }
@@ -604,7 +604,7 @@ class _MyAddsState extends State<MyAdds> {
                                       else {
                                         return new Center(
                                           child: Container(
-                                              child: Text("no data")
+                                              child: Text("noData".tr())
                                           ),
                                         );
                                       }

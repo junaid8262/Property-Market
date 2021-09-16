@@ -8,8 +8,10 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:lottie/lottie.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:propertymarket/admin/add_property.dart';
+import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/model/slideshow.dart';
+import 'package:propertymarket/navigator/bottom_navigation.dart';
 import 'package:propertymarket/navigator/menu_drawer.dart';
 import 'package:propertymarket/screens/property_list.dart';
 import 'package:propertymarket/values/constants.dart';
@@ -827,6 +829,14 @@ class _HomePageState extends State<HomePage> {
                         child: Text('title'.tr(),style: TextStyle(color: Colors.white,fontSize: 25),),
                       ),
                     ),
+                    Positioned(
+                        right: 8,
+                        top: 11,
+                        child: InkWell(
+                          onTap: (){
+                            _showChangeLanguageDailog();
+                          },
+                            child: Icon(Icons.language,color: Colors.white,))),
                     Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
@@ -1008,14 +1018,6 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColor ,
-        child: Icon(Icons.add),
-        onPressed: (){
-          Navigator.push(
-              context, MaterialPageRoute(builder: (BuildContext context) => AddProperty()));
-        },
-      ),
 
     );
   }
@@ -1030,4 +1032,62 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  _showChangeLanguageDailog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          insetAnimationDuration: const Duration(seconds: 1),
+          insetAnimationCurve: Curves.fastOutSlowIn,
+          elevation: 2,
+
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30)
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(10),
+                  child: Text('changeLanguage'.tr(),textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                ),
+                ListTile(
+                  onTap: (){
+                    context.locale = Locale('ar', 'EG');
+                    SharedPref sharedPref=new SharedPref();
+                    sharedPref.setPref(false);
+                    Navigator.pushReplacement(context, new MaterialPageRoute(
+                        builder: (context) => BottomBar()));
+                  },
+                  title: Text('arabic'.tr()),
+                ),
+                ListTile(
+                  onTap: (){
+                    context.locale = Locale('en', 'US');
+                    SharedPref sharedPref=new SharedPref();
+                    sharedPref.setPref(true);
+                    Navigator.pushReplacement(context, new MaterialPageRoute(
+                        builder: (context) => BottomBar()));
+                  },
+                  title: Text("English"),
+                ),
+                SizedBox(
+                  height: 15,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

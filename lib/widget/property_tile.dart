@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:propertymarket/model/property.dart';
+import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
+import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
 class PropertyTile extends StatefulWidget {
@@ -200,7 +204,24 @@ class _PropertyTileState extends State<PropertyTile> {
                 VerticalDivider(color: Colors.white,),
                 InkWell(
                   onTap: (){
-                    FlutterOpenWhatsapp.sendSingleMessage(widget.property.whatsapp, "Hi there, I am looking to list a property");
+
+                    User user = FirebaseAuth.instance.currentUser;
+                    if(user.uid != widget.property.addPublisherId)
+                    {
+                      FirebaseDatabase.instance.reference().child("userData").child(widget.property.addPublisherId).once().then((DataSnapshot peerSnapshot){
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                    Chat(peerId: widget.property.addPublisherId, name: peerSnapshot.value['username'])));
+                      }
+                        //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
+                      );}
+                    else
+                    {
+                      Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
+                      print("cant chat with your self");
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.all(7),
@@ -210,9 +231,9 @@ class _PropertyTileState extends State<PropertyTile> {
                     ),
                     child: Row(
                       children: [
-                        Image.asset("assets/images/whatsapp.png",color: Colors.white,width: 25,height: 25,),
+                        Icon(Icons.message,color: Colors.white,),
                         SizedBox(width: 5,),
-                        Text('whatsapp'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color: Colors.white),),
+                        Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color: Colors.white),),
                       ],
                     )
                   ),

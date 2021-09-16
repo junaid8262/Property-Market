@@ -6,14 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/model/property.dart';
-import 'package:propertymarket/navigator/menu_drawer.dart';
 import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/screens/search_list.dart';
 import 'package:propertymarket/screens/search_property.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:propertymarket/widget/property_tile.dart';
-import 'package:toast/toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 enum rentOrBuy { rent, buy }
 class PropertyList extends StatefulWidget {

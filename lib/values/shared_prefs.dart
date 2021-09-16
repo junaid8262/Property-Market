@@ -22,6 +22,7 @@ class SharedPref{
     bool first = prefs.getBool('first') ?? true;
     print("firstpref $first");
     return first;
-
   }
+
+
 }

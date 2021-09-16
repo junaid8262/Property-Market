@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+/*
 class MyText{
 
   static TextStyle display4(BuildContext context){
@@ -60,4 +61,4 @@ class MyText{
   static TextStyle overline(BuildContext context){
     return Theme.of(context).textTheme.overline;
   }
-}
+}*/

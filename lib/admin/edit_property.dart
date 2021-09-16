@@ -1381,6 +1381,7 @@ class _EditPropertyState extends State<EditProperty> {
                       {
                         status = "approved";
                         submitData();
+                        getNotificationUser();
                       }
                       else
                         Toast.show("Please add atleast on image", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
@@ -1439,4 +1440,56 @@ class _EditPropertyState extends State<EditProperty> {
         )
     );
   }
+  Future getNotificationUser ()async
+  {
+    String category ;
+    isRent ? category = "rent" : category = "buy" ;
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("userNotification").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+
+          if( DATA[individualKey]['country'] == countryController.text && DATA[individualKey]['city']  == cityController.text && DATA[individualKey]['area'] == areaController.text &&  DATA[individualKey]['propertyCategory'] == category)
+          {
+            FirebaseDatabase.instance.reference().child("userData").child(DATA[individualKey]['userid']).once().then((DataSnapshot userSnapshot)
+            {
+              sendPropertyNotification(userSnapshot.value['token']);
+            });
+          }
+
+        }
+      }
+    });
+  }
+  sendPropertyNotification(String token) async{
+    String url='https://fcm.googleapis.com/fcm/send';
+    Uri myUri = Uri.parse(url);
+    await http.post(
+      myUri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverToken',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'The Property Type You Have Asked For Is Added',
+            'title': 'Your Wish list Property Is Added'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          'to': '$token',
+        },
+      ),
+    );
+  }
+
+
 }

@@ -1,20 +1,25 @@
+/*
+import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:propertymarket/admin/Add_Trending.dart';
 import 'package:propertymarket/admin/add_news.dart';
+import 'package:propertymarket/admin/view_news.dart';
 import 'package:propertymarket/model/news_model.dart';
 import 'package:propertymarket/navigator/admin_drawer.dart';
 import 'package:propertymarket/screens/news_details.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:easy_localization/easy_localization.dart';
-class ViewNews extends StatefulWidget {
+
+class ViewTrending extends StatefulWidget {
+
   @override
-  _ViewNewsState createState() => _ViewNewsState();
+  _ViewTrendingState createState() => _ViewTrendingState();
 }
 
-class _ViewNewsState extends State<ViewNews> {
+class _ViewTrendingState extends State<ViewTrending> {
   SharedPref sharedPref=new SharedPref();
 
   deleteItem(String id)async{
@@ -86,6 +91,7 @@ class _ViewNewsState extends State<ViewNews> {
 
     return list;
   }
+
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   void _openDrawer () {
     _drawerKey.currentState.openDrawer();
@@ -100,7 +106,7 @@ class _ViewNewsState extends State<ViewNews> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddNews()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AddTrending()));
         },
       ),
       body:SafeArea(
@@ -127,7 +133,7 @@ class _ViewNewsState extends State<ViewNews> {
                   ),
                   Container(
                     alignment: Alignment.center,
-                    child: Text('news'.tr(),style: TextStyle(fontWeight: FontWeight.w700,fontSize: 13),),
+                    child: Text('Trending',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 13),),
                   ),
                 ],
               ),
@@ -216,3 +222,4 @@ class _ViewNewsState extends State<ViewNews> {
     );
   }
 }
+*/

@@ -1,5 +1,8 @@
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:propertymarket/admin/User_Adds.dart';
+import 'package:propertymarket/auth/Google_SignIn.dart';
 import 'package:propertymarket/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +17,13 @@ import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/screens/favourites.dart';
 import 'package:propertymarket/screens/home.dart';
 import 'package:propertymarket/values/constants.dart';
+import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:propertymarket/widget/my_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../privacy_webview.dart';
+
 class MenuDrawer extends StatefulWidget {
 
 
@@ -30,7 +35,7 @@ class MenuDrawer extends StatefulWidget {
 class MenuDrawerState extends State<MenuDrawer> {
 
 
-  void onDrawerItemClicked(String name){
+  void onDrawerItemClicked(String name) {
     Navigator.pop(context);
   }
 
@@ -58,7 +63,11 @@ class MenuDrawerState extends State<MenuDrawer> {
               children: [
                 Container(
                   margin: EdgeInsets.all(10),
-                  child: Text("Contact Information",textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                  child: Text(
+                    "Contact Information", textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600),),
                 ),
                 ListTile(
                   leading: Icon(Icons.phone),
@@ -103,17 +112,21 @@ class MenuDrawerState extends State<MenuDrawer> {
               children: [
                 Container(
                   margin: EdgeInsets.all(10),
-                  child: Text('changeLanguage'.tr(),textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                  child: Text(
+                    'changeLanguage'.tr(), textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600),),
                 ),
                 ListTile(
-                  onTap: (){
+                  onTap: () {
                     context.locale = Locale('ar', 'EG');
                     Navigator.pop(context);
                   },
                   title: Text('arabic'.tr()),
                 ),
                 ListTile(
-                  onTap: (){
+                  onTap: () {
                     context.locale = Locale('en', 'US');
                     Navigator.pop(context);
                   },
@@ -130,50 +143,45 @@ class MenuDrawerState extends State<MenuDrawer> {
     );
   }
 
-  void _launchURL() async => await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
-
-
+  void _launchURL() async =>
+      await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
 
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
 
 
-
           SizedBox(height: 30,),
           InkWell(
-            onTap: (){
+            onTap: () {
               Navigator.pushReplacement(context, new MaterialPageRoute(
                   builder: (context) => BottomBar()));
             },
             child: Container(
               alignment: Alignment.center,
-              child: Image.asset('icon'.tr(),height: 150,),
+              child: Image.asset('icon'.tr(), height: 150,),
             ),
           ),
 
           SizedBox(height: 30,),
           InkWell(
-            onTap: (){
-              User user=FirebaseAuth.instance.currentUser;
-              if(user == null)
-                {
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => Login()));
-                }
-              else
-                {
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => MyProfile()));
-                }
-
+            onTap: () {
+              User user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login()));
+              }
+              else {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => MyProfile()));
+              }
             },
-            child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.person, color: MyColors.grey_20, size: 20),
@@ -186,22 +194,19 @@ class MenuDrawerState extends State<MenuDrawer> {
 
           SizedBox(height: 10,),
           InkWell(
-            onTap: (){
-
-              User user=FirebaseAuth.instance.currentUser;
-              if(user == null)
-              {
+            onTap: () {
+              User user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => Login()));
               }
-              else
-              {
+              else {
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => MyAdds()));
               }
-
             },
-            child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.receipt, color: MyColors.grey_20, size: 20),
@@ -212,53 +217,27 @@ class MenuDrawerState extends State<MenuDrawer> {
             ),
           ),
 
-          SizedBox(height: 10,),
-          InkWell(
-            onTap: (){
-              User user=FirebaseAuth.instance.currentUser;
-              if(user == null)
-              {
-                Navigator.push(context, new MaterialPageRoute(
-                    builder: (context) => Login()));
-              }
-              else
-              {
-                Navigator.push(context, new MaterialPageRoute(
-                    builder: (context) => MyChats()));
-              }
-
-            },
-            child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.chat_sharp, color: MyColors.grey_20, size: 20),
-                  Container(width: 20),
-                  Expanded(child: Text("myChat".tr(),)),
-                ],
-              ),
-            ),
-          ),
 
           SizedBox(height: 10,),
           InkWell(
-            onTap: (){
-              User user=FirebaseAuth.instance.currentUser;
-              if(user == null)
-              {
+            onTap: () {
+              User user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => Login()));
               }
-              else
-              {
+              else {
                 Navigator.push(context, new MaterialPageRoute(
-                    builder: (context) => Chat(peerId: adminId,name: "Admin",)));
+                    builder: (context) =>
+                        Chat(peerId: adminId, name: "Admin",)));
               }
-
             },
-            child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.admin_panel_settings, color: MyColors.grey_20, size: 20),
+                  Icon(Icons.admin_panel_settings, color: MyColors.grey_20,
+                      size: 20),
                   Container(width: 20),
                   Expanded(child: Text('contactAdmin'.tr(),)),
                 ],
@@ -268,16 +247,54 @@ class MenuDrawerState extends State<MenuDrawer> {
 
           SizedBox(height: 10,),
           InkWell(
-            onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => Notify()));
+            onTap: () {
+              User user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login()));
+              }
+              else {
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => FavouriteList()));
+              }
             },
-            child:  Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.notifications, color: MyColors.grey_20, size: 20),
+                  Icon(Icons.favorite, color: MyColors.grey_20, size: 20),
                   Container(width: 20),
-                  Expanded(child: Text('notification'.tr(),)),
+                  Expanded(child: Text("favourite".tr(),)),
+                ],
+              ),
+            ),
+          ),
+
+
+          SizedBox(height: 10,),
+          InkWell(
+            onTap: () async {
+              User user = FirebaseAuth.instance.currentUser;
+             // SharedPref sp = SharedPref();
+              if (user != null) {
+                _signOut().whenComplete(() {
+                 // sp.setIsLogin(false);
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => Login()));
+                });
+              }
+
+            },
+            child: Container(
+              height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.vpn_key_sharp, color: MyColors.grey_20,
+                      size: 20),
+                  Container(width: 20),
+                  Expanded(
+                      child: FirebaseAuth.instance.currentUser == null ? Text(
+                          'login'.tr(),) : Text('logout'.tr())),
                 ],
               ),
             ),
@@ -285,22 +302,36 @@ class MenuDrawerState extends State<MenuDrawer> {
 
           SizedBox(height: 10,),
           InkWell(
-            onTap: ()async{
-              await canLaunch(url) ? await launch(url) : throw  'Could not launch $url';
-            },
-            child: Container(height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.assignment_outlined, color: MyColors.grey_20, size: 20),
-                  Container(width: 20),
-                  Expanded(child: Text('privacy'.tr(), style: MyText.body2(context).copyWith(color: MyColors.grey_80))),
-                ],
-              ),
-            ),
-          ),
-
+              onTap: () async {
+                await canLaunch(url)
+                    ? await launch(url)
+                    : throw 'Could not launch $url';},
+              child : Container(
+                height: 40, padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+          children: <Widget>[
+          Icon(Icons.assignment_outlined, color: MyColors.grey_20, size: 20),
+          Container(width: 20),
+          Expanded(child: Text('privacy'.tr(),)),
         ],
       ),
+              ),
+    ),
+
+    ]
+    ,
+    )
+    ,
     );
   }
+
+  Future<void> _signOut() async {
+
+        await FirebaseAuth.instance.signOut();
+        await GoogleSignIn().signOut();
+         //await  FacebookLogin().logOut();
+
+       // await FirebaseAuth.instance.signOut();
+  }
+ 
 }

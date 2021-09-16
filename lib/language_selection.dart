@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 
@@ -105,7 +106,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                     sharedPref.setFirstTimePref(false);
                     FirebaseAuth.instance.authStateChanges().listen((User user) {
                       if (user == null) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Login()));
                       } else {
                         if(user.uid==adminId){
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AdminSearchList()));

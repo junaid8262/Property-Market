@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -156,44 +155,48 @@ class _RegisterState extends State<Register> {
                                       await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                           email: email,
                                           password: password
-                                      ).whenComplete(() {
+                                      ).then((value) {
 
                                         final FirebaseAuth auth = FirebaseAuth.instance;
                                         final User user = auth.currentUser;
                                         var uid = user.uid;
 
-                                        FirebaseAuth.instance.authStateChanges().listen((User user) {
-                                          if (user == null) {
-                                            print('User is currently signed out!');
-                                            pr.hide();
-                                          } else {
-                                            pr.hide();
-                                            print('User is signed in!');
-                                            final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-                                            _firebaseMessaging.subscribeToTopic('user');
-                                            _firebaseMessaging.getToken().then((value) {
-                                              print(value);
-                                              User user=FirebaseAuth.instance.currentUser;
-                                              final databaseReference = FirebaseDatabase.instance.reference();
-                                              databaseReference.child("userData").child(user.uid).set({
-                                                'token':value,
-                                                'id' : uid,
-                                                'email': user.email,
-                                                'username' : userName.trim(),
-                                                'profile': photoUrl,
-                                              }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())));
+                                        if (user == null) {
+                                          print('User is currently signed out!');
+                                          pr.hide();
+                                        } else {
+                                          pr.hide();
+                                          print('User is signed in!');
+                                          final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+                                          _firebaseMessaging.subscribeToTopic('user');
+                                          _firebaseMessaging.getToken().then((value) {
+                                            print(value);
+                                            User user=FirebaseAuth.instance.currentUser;
+                                            final databaseReference = FirebaseDatabase.instance.reference();
+                                            databaseReference.child("userData").child(user.uid).set({
+                                              'token':value,
+                                              'id' : uid,
+                                              'email': user.email,
+                                              'username' : userName.trim(),
+                                              'profile': photoUrl,
+                                            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())));
 
-                                            });
+                                          });
 
-                                          }
-                                        });
+                                        }
+                                      }).onError((error, stackTrace) {
+                                        pr.hide();
+                                        Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
+                                        print("error code is : ${error.toString()}");
                                       });
                                     } on FirebaseAuthException catch (e) {
+                                      print("error code is : ${e.code}");
                                       pr.hide();
                                       if (e.code == 'weak-password') {
+                                        Toast.show("Weak Password", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
                                         print('The password provided is too weak.');
                                       } else if (e.code == 'email-already-in-use') {
-
+                                        Toast.show("User Already Registered", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
                                         print('The account already exists for that email.');
                                       }
                                     } catch (e) {
@@ -202,6 +205,10 @@ class _RegisterState extends State<Register> {
                                     }
 
                                   }
+                                  else if (photoUrl.length<=0)
+                                    {
+                                      Toast.show("Please Upload Profile Image", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
+                                    }
 
                             }
                           },
@@ -285,6 +292,7 @@ class _RegisterState extends State<Register> {
     await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
 
   }
+
   void _showPicker(context) {
     showModalBottomSheet(
         context: context,

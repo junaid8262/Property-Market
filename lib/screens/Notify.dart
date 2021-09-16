@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:date_format/date_format.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,6 +14,7 @@ import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:easy_localization/easy_localization.dart';
+enum rentOrBuy { rent, buy }
 
 class Notify extends StatefulWidget {
   const Notify({Key key}) : super(key: key);
@@ -46,6 +48,8 @@ class _NotifyState extends State<Notify> {
   String selectedCityName='selectCity'.tr();
   String selectedAreaName='selectArea'.tr();
 
+  bool isRent=true;
+  rentOrBuy _rentOrBuy = rentOrBuy.rent;
 
   @override
   Widget build(BuildContext context) {
@@ -58,197 +62,245 @@ class _NotifyState extends State<Notify> {
         ),
         centerTitle: true,
       ),
-      body : Container(
-        //height: MediaQuery.of(context).size.height*0.42,
-        margin: EdgeInsets.only(left: 10,right: 10,top: 10),
-        color: Colors.white,
-        child: Column(
-          children: [
-            Divider(color: Colors.grey,),
-            ListTile(
-              onTap: ()=>sharedPref.getPref().then((value) => _showCountryDailog(value)),
-              leading: Image.asset("assets/images/country.png",width: 30,height: 30,),
-              title: Text(selectedCountryName,style: TextStyle(color: Colors.grey[600]),),
-              trailing: Icon(Icons.keyboard_arrow_down),
-            ),
-            Divider(color: Colors.grey,),
-            ListTile(
-              onTap: (){
-                if(selectedCountryId!=null){
-                  sharedPref.getPref().then((value) => _showCityDailog(value));
-                }
-                else{
-                  //Toast.show("Please select above", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-                }
-              },
-              leading: Image.asset("assets/images/city.png",width: 30,height: 30,),
-              title: Text(selectedCityName,style: TextStyle(color: Colors.grey[600]),),
-              trailing: Icon(Icons.keyboard_arrow_down),
-            ),
-            Divider(color: Colors.grey,),
-            ListTile(
-              onTap: (){
-                if(selectedCountryId!=null && selectedCityId!=null){
-                  sharedPref.getPref().then((value) => _showAreaDailog(value));
-
-                }
-                else{
-                  //Toast.show("Please select above", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-                }
-              },
-              leading: Image.asset("assets/images/area.png",width: 30,height: 30,),
-              title: Text(selectedAreaName,style: TextStyle(color: Colors.grey[600]),),
-              trailing: Icon(Icons.keyboard_arrow_down),
-            ),
-
-            SizedBox(height: 10,),
-            InkWell(
-              onTap: ()async{
-              if(selectedCityId!=null  && selectedCityId!="" && selectedCountryId!=null && selectedCountryId!=""  && selectedAreaName!=null  && selectedAreaName!="") {
-                randNumber();
-                makeNotificationRequest().whenComplete(() {
-                  setState(() {
-                  });
-                });
-
-              }
-
-              },
-              child: Container(
-                alignment: Alignment.center,
-                height: 60,
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [
-                        0.4,
-                        0.6,
-                      ],
-                      colors: [
-                        Color(0xff307bd6),
-                        Color(0xff2895fa),
-                      ],
-                    )
-                ),
-                child: Text('Notify'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 20),),
-              ),
-            ),
-
-            SizedBox(height: 10,),
-            Container(
-              height: MediaQuery.of(context).size.height*0.4,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black54),
-              ),
-              child: Column(
+      body : SingleChildScrollView(
+        child: Container(
+          //height: MediaQuery.of(context).size.height*0.42,
+          margin: EdgeInsets.only(left: 10,right: 10,top: 10),
+          color: Colors.white,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: Text("myNotification".tr(),style: TextStyle(
-                        fontSize: 20,
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold
-                      ),),
-                    ),
+                  new Radio(
+                    value: rentOrBuy.rent,
+                    groupValue: _rentOrBuy,
+                    onChanged: (rentOrBuy value) {
+                      setState(() {
+                        isRent = true;
+                        _rentOrBuy = value;
+                        print(context.locale);
+                      });
+                    },
                   ),
-                  Container(
-                    color: primaryColor,
-                    height: 1.5,
-                    width: MediaQuery.of(context).size.width*0.4,
+                  new Text(
+                    'rent'.tr(),
+                    style: new TextStyle(fontSize: 16.0),
                   ),
-                  Container(
-                    height: 7,
+                  new Radio(
+                    value: rentOrBuy.buy,
+                    groupValue: _rentOrBuy,
+                    onChanged: (rentOrBuy value) {
+                      setState(() {
+                        isRent = false;
+                        _rentOrBuy = value;
+                      });
+                    },
                   ),
-                  Container(
-                     height: MediaQuery.of(context).size.height*0.3,
-
-        child: FutureBuilder<List<UserNotificationModel>>(
-                      future: getUserNotifications(),
-                      builder: (context,snapshot){
-                        if (snapshot.hasData ) {
-                          if (snapshot.data != null && snapshot.data.length>0  ) {
-                            print(userid);
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    height: MediaQuery.of(context).size.height*0.08,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Text(snapshot.data[index].country + " , " + snapshot.data[index].city + " , " + snapshot.data[index].area ,style: TextStyle(
-                                                fontSize: 14
-                                              ),),
-                                            ),
-                                            IconButton(onPressed:()async{
-                                              FirebaseDatabase.instance.reference()
-                                                  .child('userNotification')
-                                                  .orderByChild('notificationId')
-                                                  .equalTo(snapshot.data[index].notificationId)
-                                                  .once()
-                                                  .then((DataSnapshot snapshot) {
-                                                Map<dynamic, dynamic> children = snapshot.value;
-                                                children.forEach((key, value) {
-                                                  FirebaseDatabase.instance.reference()
-                                                      .child('userNotification')
-                                                      .child(key)
-                                                      .remove();
-                                                });
-                                              }).whenComplete(()  {
-                                              setState(() {
-                                              });
-                                              });
-
-
-                                            }, icon: Icon(Icons.delete,color: Colors.red,))
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 1,
-                                          width: MediaQuery.of(context).size.width*0.87,
-                                          color: Colors.black54,
-                                        )
-                                      ],
-                                    )
-                                  );
-                                });
-                          }
-                          else {
-                            print("user id :$userid");
-
-                            return new Center(
-                              child: Container(
-                                  child: Text("No Notification Request")
-                              ),
-                            );
-                          }
-                        }
-                        else if (snapshot.hasError) {
-
-                          return Text('Error : ${snapshot.error}');
-                        } else {
-
-                          return new Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
+                  new Text(
+                    'buy'.tr(),
+                    style: new TextStyle(
+                      fontSize: 16.0,
                     ),
                   ),
                 ],
               ),
+              Divider(color: Colors.grey,),
 
-            )
-          ],
+              ListTile(
+                onTap: ()=>sharedPref.getPref().then((value) => _showCountryDailog(value)),
+                leading: Image.asset("assets/images/country.png",width: 30,height: 30,),
+                title: Text(selectedCountryName,style: TextStyle(color: Colors.grey[600]),),
+                trailing: Icon(Icons.keyboard_arrow_down),
+              ),
+              Divider(color: Colors.grey,),
+              ListTile(
+                onTap: (){
+                  if(selectedCountryId!=null){
+                    sharedPref.getPref().then((value) => _showCityDailog(value));
+                  }
+                  else{
+                    //Toast.show("Please select above", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+                  }
+                },
+                leading: Image.asset("assets/images/city.png",width: 30,height: 30,),
+                title: Text(selectedCityName,style: TextStyle(color: Colors.grey[600]),),
+                trailing: Icon(Icons.keyboard_arrow_down),
+              ),
+              Divider(color: Colors.grey,),
+              ListTile(
+                onTap: (){
+                  if(selectedCountryId!=null && selectedCityId!=null){
+                    sharedPref.getPref().then((value) => _showAreaDailog(value));
+
+                  }
+                  else{
+                    //Toast.show("Please select above", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+                  }
+                },
+                leading: Image.asset("assets/images/area.png",width: 30,height: 30,),
+                title: Text(selectedAreaName,style: TextStyle(color: Colors.grey[600]),),
+                trailing: Icon(Icons.keyboard_arrow_down),
+              ),
+
+              SizedBox(height: 10,),
+              InkWell(
+                onTap: ()async{
+                if(selectedCityId!=null  && selectedCityId!="" && selectedCountryId!=null && selectedCountryId!=""  && selectedAreaName!=null  && selectedAreaName!="") {
+                  randNumber();
+                  makeNotificationRequest().whenComplete(() {
+                    setState(() {
+                    });
+                  });
+
+                }
+
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 60,
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        stops: [
+                          0.4,
+                          0.6,
+                        ],
+                        colors: [
+                          Color(0xff307bd6),
+                          Color(0xff2895fa),
+                        ],
+                      )
+                  ),
+                  child: Text('Notify'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 20),),
+                ),
+              ),
+
+              SizedBox(height: 10,),
+              Container(
+                height: MediaQuery.of(context).size.height*0.36,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black54),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Text("myNotification".tr(),style: TextStyle(
+                          fontSize: 20,
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold
+                        ),),
+                      ),
+                    ),
+                    Container(
+                      color: primaryColor,
+                      height: 1.5,
+                      width: MediaQuery.of(context).size.width*0.4,
+                    ),
+                    Container(
+                      height: 7,
+                    ),
+                    Container(
+                       height: MediaQuery.of(context).size.height*0.27,
+
+          child: FutureBuilder<List<UserNotificationModel>>(
+                        future: getUserNotifications(),
+                        builder: (context,snapshot){
+                          if (snapshot.hasData ) {
+                            if (snapshot.data != null && snapshot.data.length>0  ) {
+                              print(userid);
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      height: MediaQuery.of(context).size.height*0.1,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(10.0),
+                                                      child: Text("Address : " + snapshot.data[index].country + " , " + snapshot.data[index].city + " , " + snapshot.data[index].area + "\nCategory : " + snapshot.data[index].propertyCategory ,style: TextStyle(
+                                                        fontSize: 14
+                                                      ),),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                                width: MediaQuery.of(context).size.width*0.8,
+                                                alignment: Alignment.centerLeft,
+                                              ),
+                                              IconButton(onPressed:()async{
+                                                FirebaseDatabase.instance.reference()
+                                                    .child('userNotification')
+                                                    .orderByChild('notificationId')
+                                                    .equalTo(snapshot.data[index].notificationId)
+                                                    .once()
+                                                    .then((DataSnapshot snapshot) {
+                                                  Map<dynamic, dynamic> children = snapshot.value;
+                                                  children.forEach((key, value) {
+                                                    FirebaseDatabase.instance.reference()
+                                                        .child('userNotification')
+                                                        .child(key)
+                                                        .remove();
+                                                  });
+                                                }).whenComplete(()  {
+                                                setState(() {
+                                                });
+                                                });
+
+
+                                              }, icon: Icon(Icons.delete,color: Colors.red,))
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 1,
+                                            width: MediaQuery.of(context).size.width*0.87,
+                                            color: Colors.black54,
+                                          )
+                                        ],
+                                      )
+                                    );
+                                  });
+                            }
+                            else {
+                              print("user id :$userid");
+
+                              return new Center(
+                                child: Container(
+                                    child: Text("No Notification Request")
+                                ),
+                              );
+                            }
+                          }
+                          else if (snapshot.hasError) {
+
+                            return Text('Error : ${snapshot.error}');
+                          } else {
+
+                            return new Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+              )
+            ],
+          ),
         ),
       ),
 
@@ -731,6 +783,7 @@ class _NotifyState extends State<Notify> {
       'city' : selectedCityName,
       'area': selectedAreaName,
       'notificationId' : notificationId,
+      'propertyCategory' : isRent?"rent":"buy",
     }).whenComplete(() => pr.hide());
   }
 
@@ -749,6 +802,7 @@ class _NotifyState extends State<Notify> {
             DATA[individualKey]['country'],
             DATA[individualKey]['area'],
             DATA[individualKey]['notificationId'],
+            DATA[individualKey]['propertyCategory']
 
           );
           if(DATA[individualKey]['userid']==userid)

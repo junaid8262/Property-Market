@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 const primaryColor = Color(0xFF0247af);
 const backgroundColorLight = Color(0xFFfcdeb3);
 //const adminId="GSExrT5IUrfVmg9bY9kZcayclFl2";
-const adminId="lwlCdYLETNhCS178NcY5jZrbNvw2"; //temp admin
+const adminId="Ikpm3S7725h8UFeFJ8shhTB0e6F2"; //temp admin
 const serverToken="AAAAEw4em9g:APA91bGrMl-LZ_gVm1AETZqjl0k4eKAKt16Ilzsp-ngfQuypNqvXmK8Y8FyYMw-N9t9FYGYgS_HFjblGk1bH0rIThyShDTsStDMSrkkRF4s2QLSn3_4pmcU0RcuKvSGczIDFHPVjAdph";
 const primaryColorDark = Color(0xFF2f3b47);
 final RegExp emailValidatorRegExp =

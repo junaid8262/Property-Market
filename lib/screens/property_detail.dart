@@ -13,6 +13,7 @@ import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 class PropertyDetail extends StatefulWidget {
   Property _property;
@@ -317,7 +318,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.house_outlined),
+                                  Icon(Icons.house_outlined,color: Colors.blue,),
                                   SizedBox(width: 10,),
                                   Text('type'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -341,7 +342,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.monetization_on_outlined),
+                                  Icon(Icons.monetization_on_outlined,color: Colors.green,),
                                   SizedBox(width: 10,),
                                   Text('price'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -365,7 +366,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.money),
+                                  Icon(Icons.money,color : Colors.green.shade900),
                                   SizedBox(width: 10,),
                                   Text('payment'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -389,7 +390,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.all_out),
+                                  Icon(Icons.all_out,color : Colors.red),
                                   SizedBox(width: 10,),
                                   Text('furnish'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -414,7 +415,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.king_bed_outlined),
+                                  Icon(Icons.king_bed_outlined,color :Colors.brown),
                                   SizedBox(width: 10,),
                                   Text('bedroom'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -438,7 +439,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.square_foot_outlined),
+                                  Icon(Icons.square_foot_outlined,color: Colors.orange,),
                                   SizedBox(width: 10,),
                                   Text('area'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -462,7 +463,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.check_circle_outline),
+                                  Icon(Icons.check_circle_outline,color : Colors.greenAccent),
                                   SizedBox(width: 10,),
                                   Text('purpose'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -510,7 +511,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               flex: 3,
                               child: Row(
                                 children: [
-                                  Icon(Icons.vpn_key_outlined),
+                                  Icon(Icons.vpn_key_outlined,color: Colors.blueAccent,),
                                   SizedBox(width: 10,),
                                   Text('serial'.tr(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
                                 ],
@@ -543,7 +544,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 ),
                 Container(
                   margin: EdgeInsets.all(10),
-                  child: Text(widget.lang?widget._property.location:"${widget._property.area_ar}, ${widget._property.city_ar}, ${widget._property.country_ar}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                  child: Text(widget.lang?widget._property.location:"${widget._property.area_ar}, ${widget._property.city_ar}, ${widget._property.country_ar}",style: TextStyle(color: Colors.black,fontSize: 15),),
                 ),
                 Container(
                   margin: EdgeInsets.all(10),
@@ -551,7 +552,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 ),
                 Container(
                   margin: EdgeInsets.all(10),
-                  child: Text(widget.lang?widget._property.description:widget._property.description_ar,style: TextStyle(color: Colors.grey,fontSize: 15),),
+                  child: Text(widget.lang?widget._property.description:widget._property.description_ar,style: TextStyle(color: Colors.black,fontSize: 15),),
                 ),
                 Container(
                   margin: EdgeInsets.all(10),
@@ -559,7 +560,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 ),
                 Container(
                   margin: EdgeInsets.all(10),
-                  child: Text(widget.lang?widget._property.agentName:widget._property.agentName_ar,style: TextStyle(color: Colors.grey,fontSize: 15),),
+                  child: Text(widget.lang?widget._property.agentName:widget._property.agentName_ar,style: TextStyle(color: Colors.black,fontSize: 15),),
                 ),
                 AdmobBanner(
                   adUnitId: Platform.isAndroid ? androidAdmobBanner : iosAdmobBanner,
@@ -629,8 +630,22 @@ class _PropertyDetailState extends State<PropertyDetail> {
                       ),
                       InkWell(
                         onTap: (){
-                          FlutterOpenWhatsapp.sendSingleMessage(widget._property.whatsapp, "Hi there, I am looking to list a property");
-                        },
+                          if(Uid != widget._property.addPublisherId)
+                          {
+                            FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot){
+                              Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) =>
+                                          Chat(peerId: widget._property.addPublisherId, name: peerSnapshot.value['username'])));
+                            }
+                              //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
+                            );}
+                          else
+                          {
+                            Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
+                            print("cant chat with your self");
+                          }                        },
                         child: Container(
                           padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
                           decoration: BoxDecoration(
@@ -639,9 +654,9 @@ class _PropertyDetailState extends State<PropertyDetail> {
                           ),
                           child: Row(
                             children: [
-                              Image.asset("assets/images/whatsapp.png",color: Colors.white,width: 25,height: 25,),
+                              Icon(Icons.message,color: Colors.white,),
                               SizedBox(width: 5,),
-                              Text('whatsapp'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
+                              Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
                             ],
                           )
                         ),
@@ -682,31 +697,17 @@ class _PropertyDetailState extends State<PropertyDetail> {
         ],
       ),
 
-      floatingActionButton: Builder(
+   /*   floatingActionButton: Builder(
         builder: (context) =>Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 10, 50),
         child: FloatingActionButton(
           backgroundColor: primaryColor,
           child: Icon(Icons.message),
           onPressed: (){
-            if(Uid != widget._property.addPublisherId)
-              {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
-              }
-            else
-              {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 2),
-                  backgroundColor: primaryColor,
-                  content: Text(
-                    "Cant Chat With Your Self",
-                  ),
-                ));
-                print("cant chat with your self");
-              }
+
           },
         ),
-      ),),
+      ),),*/
     );
   }
   Widget _slider(String image) {

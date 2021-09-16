@@ -26,6 +26,8 @@ class _MyChatsState extends State<MyChats> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    setState(() {
+    });
     getUid();
   }
 
@@ -38,6 +40,7 @@ class _MyChatsState extends State<MyChats> {
   int _limit = 20;
   final ScrollController listScrollController = ScrollController();
   bool isLoading = false;
+  String messageIndex = "0" ;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +121,7 @@ class _MyChatsState extends State<MyChats> {
                     print("user data not found");
                     return Center(
                       child: Container(
-                        child: Text("No Previous Chat"),
+                        child: Text("noPreviousChat".tr()),
                       ),
                     );
                   } else {
@@ -180,49 +183,114 @@ class _MyChatsState extends State<MyChats> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data != null && snapshot.data.length > 0) {
-                return ListView.builder(
+                return ListView.separated(
                     shrinkWrap: true,
+                    separatorBuilder: (context, index) {
+                      return  Divider(color: Colors.black,thickness: 3,);
+                    },
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      print(snapshot.data[index].profilePic);
+                      Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance.collection('unseen Message').doc(uId).collection('unseen Message').doc(snapshot.data[index].id).snapshots() ;
                       return Container(
-                        height: 70,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color: Colors.grey.shade300,
-                        ),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(7.0),
-                              child: Container(
-                                width: 100,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.grey,
-                                    border: Border.all(color: Colors.grey),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          snapshot.data[index].profilePic),
-                                      fit: BoxFit.contain,
-                                    )),
-                              ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(7.0),
+                                  child: Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey,
+                                        border: Border.all(color: Colors.grey),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              snapshot.data[index].profilePic),
+                                          fit: BoxFit.contain,
+                                        )),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data[index].username,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.grey.shade800,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                StreamBuilder<DocumentSnapshot>(
+                                  stream:  _usersStream,
+                                  builder: ( BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshots){
+                                    if(snapshots.data != null )
+                                      {
+                                            if(snapshots.data['unseen'] == 0)
+                                              {
+                                               Container();
+                                              }
+                                            else
+                                              {
+                                                if(snapshots.data['unseen'] >= 100)
+                                                  {
+                                                    return Container(
+                                                      height: 25,
+                                                      width: 25,
+                                                      decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color: primaryColor
+                                                      ),
+                                                      child: Center(child: Text("99+",style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                          fontWeight: FontWeight.bold
+                                                      ),),),
+                                                    );
+                                                  }
+                                                else
+                                                  {
+                                                    return Container(
+                                                      height: 25,
+                                                      width: 25,
+                                                      decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color: primaryColor
+                                                      ),
+                                                      child: Center(child: Text(snapshots.data['unseen'].toString(),style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                          fontWeight: FontWeight.bold
+                                                      ),),),
+                                                    );
+
+                                                  }
+                                              }
+
+
+
+                                      }
+                                    return Container();
+                                  },
+                                ),
+/*
+                                messageIndex == "0" ? Container() : ,
+*/
+                              ],
                             ),
-                            Text(
-                              snapshot.data[index].username,
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.grey.shade800,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            Divider(
+                              height: 1,
+                              indent: 70,
+                              color: Colors.black54,
+                            )
                           ],
                         ),
                       );
                     });
               } else {
-                return new Center(
-                  child: Container(child: Text("no data")),
+                return  Center(
+                  child: Container(child: Text("noData").tr()),
                 );
               }
             } else if (snapshot.hasError) {
@@ -237,6 +305,42 @@ class _MyChatsState extends State<MyChats> {
       ),
     );
   }
+
+  Future indexMessage (String peer){
+
+    CollectionReference users = FirebaseFirestore.instance.collection('unseen Message');
+    users.doc(uId).collection('unseen Message').doc(peer).get().then((DocumentSnapshot documentSnapshot) {
+      if(documentSnapshot.exists)
+      {
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+        print("Message index is : ${data['unseen']}");
+
+        if(data['unseen'] == 0)
+        {
+           messageIndex = "0";
+
+        }
+        else
+        {
+          if(data['unseen']>= 100)
+          {
+              messageIndex = "99+";
+          }
+          else
+          {
+             messageIndex = data['unseen'].toString();
+          }
+        }
+      }
+      else
+      {
+        print("No data");
+         messageIndex = "0";
+      }
+
+    });
+  }
+
 
   Future<List<PeerUser>> userData() async {
     List<PeerUser> list = [];

@@ -88,16 +88,20 @@
   "from": "From",
   "privacy": "Privacy Policy & Support",
   "myProfile" : "My Profile",
-  "myAdds" : "My Adds",
-  "myChat" : "My Chat",
-  "contactAdmin" : "Contact Admin",
-  "notification" : "Notification",
+  "myAdds" : "My Ads",
+  "myChat" : "Messages",
+  "contactAdmin" : "Message Property Market",
+  "notification" : "Notify",
   "approved" : "Approved",
   "pending" : "Pending",
   "rejected" : "Rejected",
   "typeYourMessage" : "Type your message...",
   "Notify" : "Notify",
-  "myNotification" :  "My Notification"
+  "myNotification" :  "My Notification",
+  "trending" : "Trending",
+  "noData": "No Data",
+  "noPreviousChat" : "No Previous Chat",
+  "message" : "Message"
 
 
 }

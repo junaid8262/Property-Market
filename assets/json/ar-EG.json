@@ -88,15 +88,18 @@
   "from": "من",
   "privacy":"سياسة الخصوصية و الدعم",
   "myProfile" : "ملفي",
-  "myAdds" : "إضافاتي",
-  "myChat" : "دردشاتي",
-  "contactAdmin" : "اتصل بالمسؤول",
-  "notification" : "تنبيه",
+  "myAdds" : "إعلاناتي",
+  "myChat" : "رسالة",
+  "contactAdmin" : "رسالة سوق العقارات",
+  "notification" : "الآشعارات",
   "approved" : "وافق",
   "pending" : "ريثما",
   "rejected" : "مرفوض",
   "typeYourMessage" : "اكتب رسالتك ...",
-  "Notify" : "يخطر",
-  "myNotification" :  "إخطاري"
-
+  "Notify" : "إضافة تنبيه ",
+  "myNotification" :  "التنبيهأت آلمطلوبه",
+  "trending" : "الشائع",
+  "noData": "لايوجد بيانات",
+  "noPreviousChat" : "لا توجد محادثة سابقة",
+  "message"  : "رسالة"
 }

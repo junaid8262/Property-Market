@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     //     testingId: "97294348-249f-4530-b841-55eed93b02f0"
     // );
     //_controller = VideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
-    _controller = VideoPlayerController.asset("assets/video/intro.mp4");
+    _controller = VideoPlayerController.asset("assets/video/splash.mp4");
     _initializeVideoPlayerFuture = _controller.initialize();
     _loadWidget();
     //_controller.setLooping(true);
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
       else{
         FirebaseAuth.instance.authStateChanges().listen((User user) {
       if (user == null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Login()));
       } else {
         if(user.uid==adminId){
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AdminSearchList()));

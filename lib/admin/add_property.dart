@@ -708,17 +708,52 @@ class _AddPropertyState extends State<AddProperty> {
                             },
                             child: Column(
                               children: [
-                                Container(
-                                  height: 75,
-                                  width: 75,
-                                  margin: EdgeInsets.only(right: 10),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: FileImage(imageFiles[index]),
-                                        fit: BoxFit.cover,
-                                      )
-                                  ),
+                                Stack(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (_) {
+                                              return FullScreenImage(
+                                                imageUrl: imageFiles[index],
+                                                tag: "generate_a_unique_tag",
+                                              );
+                                            }));
+                                      },
+                                      child: Hero(
+                                        child : Container(
+                                          height: 85,
+                                          width: 85,
+                                          margin: EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                image: FileImage(imageFiles[index]),
+                                                fit: BoxFit.cover,
+                                              )
+                                          ),
+                                        ),
+
+                                        tag: "generate_a_unique_tag",
+                                      ),
+                                    ),
+                                    Positioned(
+                                        top : 5,
+                                        right : 10,
+                                        child: InkWell(
+                                          onTap : ()  {
+                                            print("button press");
+                                             setState(() {
+                                                   imageFiles.removeAt(index);
+                                                   imageFiles.sort();
+                                                   imageURLs.removeAt(index);
+                                                   imageURLs.sort();
+                                             });
+                                            },
+
+                                            child: Icon(Icons.delete,color: Colors.red,))
+                                    ),
+                                  ],
                                 ),
                                 Text(_progress[index],style: TextStyle(fontSize: 12),)
                               ],
@@ -1336,6 +1371,7 @@ class _AddPropertyState extends State<AddProperty> {
               margin: EdgeInsets.all(10),
               child: RaisedButton(
                 onPressed: (){
+                  print("url lenght : ${imageURLs.length}");
                   if (_formKey.currentState.validate()) {
                     if(imageURLs.length>0)
                       {
@@ -1344,6 +1380,7 @@ class _AddPropertyState extends State<AddProperty> {
                             status = "approved";
                             addPublisherId = getUserId();
                             submitData();
+                            getNotificationUser();
                           }
                         else{
                           status = "pending";
@@ -1369,6 +1406,95 @@ class _AddPropertyState extends State<AddProperty> {
           ],
         ),
       )
+    );
+  }
+  Future getNotificationUser ()async
+  {
+    String category ;
+    isRent ? category = "rent" : category = "buy" ;
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("userNotification").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+
+          if( DATA[individualKey]['country'] == countryController.text && DATA[individualKey]['city']  == cityController.text && DATA[individualKey]['area'] == areaController.text &&  DATA[individualKey]['propertyCategory'] == category)
+            {
+              FirebaseDatabase.instance.reference().child("userData").child(DATA[individualKey]['userid']).once().then((DataSnapshot userSnapshot)
+                  {
+                    sendPropertyNotification(userSnapshot.value['token']);
+                  });
+            }
+
+        }
+      }
+    });
+  }
+  sendPropertyNotification(String token) async{
+    String url='https://fcm.googleapis.com/fcm/send';
+    Uri myUri = Uri.parse(url);
+    await http.post(
+      myUri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverToken',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'The Property Type You Have Asked For Is Added',
+            'title': 'Your Wish list Property Is Added'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          'to': '$token',
+        },
+      ),
+    );
+  }
+
+
+}
+
+
+class FullScreenImage extends StatelessWidget {
+  final File imageUrl;
+  final String tag;
+
+  const FullScreenImage({Key key, this.imageUrl, this.tag}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: tag,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                 image : FileImage(
+                     imageUrl,
+                  ),
+                  fit: BoxFit.contain,
+
+                )
+              ),
+            )
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
