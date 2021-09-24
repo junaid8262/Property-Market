@@ -24,6 +24,7 @@
   "details": "تفاصيل",
   "type": "النوع",
   "bedroom": "غرف نوم",
+  "bathroom" : "حمام",
   "price": "السعر",
   "purpose": "الغرض",
   "location": "الموقع",
@@ -101,5 +102,7 @@
   "trending" : "الشائع",
   "noData": "لايوجد بيانات",
   "noPreviousChat" : "لا توجد محادثة سابقة",
-  "message"  : "رسالة"
+  "message"  : "رسالة",
+  "addNotification" : "إضافة إخطار",
+  "myNotification" : "إخطاري"
 }

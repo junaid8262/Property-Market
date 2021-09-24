@@ -77,6 +77,9 @@ class _UserAddsState extends State<UserAdds> {
     }
   }
 
+  List<Property> names1 = new List();
+  List<Property> filteredNames1 = new List();
+
   Future<List<Property>> getPropertyListApproved() async {
     List<Property> list=[];
     final databaseReference = FirebaseDatabase.instance.reference();
@@ -133,6 +136,7 @@ class _UserAddsState extends State<UserAdds> {
         }
       }
     });
+    list = list.reversed.toList();
     return list;
   }
 
@@ -192,6 +196,7 @@ class _UserAddsState extends State<UserAdds> {
         }
       }
     });
+    list = list.reversed.toList();
     return list;
   }
 
@@ -251,8 +256,11 @@ class _UserAddsState extends State<UserAdds> {
         }
       }
     });
+    list = list.reversed.toList();
     return list;
   }
+
+
 
 
   @override
@@ -313,6 +321,8 @@ class _UserAddsState extends State<UserAdds> {
                                     builder: (context,snapshot){
                                       if (snapshot.hasData ) {
                                         if (snapshot.data != null && snapshot.data.length>0  ) {
+
+
                                           return ListView.builder(
                                               shrinkWrap: true,
                                               itemCount: snapshot.data.length,

@@ -375,6 +375,14 @@ class _BottomNavigationState extends State<BottomBar>{
 
   AdmobBannerSize bannerSize;
   AdmobInterstitial interstitialAd;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String uid = "" ;
+  void inputData() {
+    final User user = auth.currentUser;
+    uid = user.uid;
+    // here you write the codes to input the data into firestore
+  }
+
   @override
   void initState() {
     super.initState();
@@ -386,7 +394,6 @@ class _BottomNavigationState extends State<BottomBar>{
       MyChats(),
       Notify(),
       AddProperty(),
-
 
     ];
     Admob.requestTrackingAuthorization();
@@ -541,6 +548,7 @@ class _BottomNavigationState extends State<BottomBar>{
     );
   }
   void onTabTapped(int index) async{
+
     if(index==0){
       if (await interstitialAd.isLoaded) {
         interstitialAd.show();
@@ -578,6 +586,7 @@ class _BottomNavigationState extends State<BottomBar>{
       User user=FirebaseAuth.instance.currentUser;
       if(user == null)
       {
+        print("hello");
         Navigator.push(context, new MaterialPageRoute(
             builder: (context) => Login()));
       }
@@ -605,7 +614,7 @@ class _BottomNavigationState extends State<BottomBar>{
     }
     else if(index==5){
       User user=FirebaseAuth.instance.currentUser;
-      if(user == null)
+     if(user == null)
       {
         Navigator.push(context, new MaterialPageRoute(
             builder: (context) => Login()));
@@ -632,9 +641,7 @@ class _BottomNavigationState extends State<BottomBar>{
         animationDuration: Duration(milliseconds: 800),
         animationCurve: Curves.linear,
         showElevation: true,
-        onItemSelected: (index) => setState(() {
-          _currentIndex = index;
-        }),
+        onItemSelected: onTabTapped,
         items: [
 
           FlashyTabBarItem(

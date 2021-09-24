@@ -63,6 +63,10 @@ dependencies:
   record_mp3: ^3.0.0
   path_provider: ^2.0.3
   just_audio: ^0.9.11
+  stacked: ^2.2.5
+  chewie: ^1.2.2
+
+
 
 
 

@@ -1,15 +1,15 @@
-/*
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:propertymarket/admin/view_Trending.dart';
 import 'package:propertymarket/admin/view_news.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:toast/toast.dart';
+import 'package:video_player/video_player.dart';
 
 class AddTrending extends StatefulWidget {
   @override
@@ -17,30 +17,49 @@ class AddTrending extends StatefulWidget {
 }
 
 class _AddTrendingState extends State<AddTrending> {
-  String imageUrl;
+  String videoURL;
   File imagefile;
+
+
+  File _video;
+  final picker = ImagePicker();
+  VideoPlayerController _controller;
+
+
+// This funcion will helps you to pick a Video File
+  _pickVideo() async {
+    PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    _video = File(pickedFile.path);
+    _controller = VideoPlayerController.file(_video);
+    uploadVideoToFirebase(context);
+    _initializeVideoPlayerFuture = _controller.initialize().then((value) {
+      setState(() {
+      });
+    });
+  }
+
 
   final ardescriptionController=TextEditingController();
   final descriptionController=TextEditingController();
+  final artitle=TextEditingController();
+  final title=TextEditingController();
+  final blogLink=TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  void fileSet(File file){
-    setState(() {
-      if(file!=null){
-        imagefile=file;
-      }
-    });
-    uploadImageToFirebase(context);
-  }
+
+
   submitData(){
     final databaseReference = FirebaseDatabase.instance.reference();
-    databaseReference.child("news").push().set({
-      'image':imageUrl,
+    databaseReference.child("trending").push().set({
+      'video':videoURL,
       'date':DateTime.now().toString(),
       'details': descriptionController.text,
       'details_ar': ardescriptionController.text,
+      'title': title.text,
+      'title_ar' : artitle.text,
+      'blog_link' : blogLink.text
     }).then((value) {
       Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ViewNews()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ViewTrending()));
 
 
     }).catchError((onError){
@@ -48,57 +67,24 @@ class _AddTrendingState extends State<AddTrending> {
 
     });
   }
-  Future uploadImageToFirebase(BuildContext context) async {
+  Future uploadVideoToFirebase(BuildContext context) async {
     final ProgressDialog pr = ProgressDialog(context);
     await pr.show();
     firebase_storage.Reference firebaseStorageRef = firebase_storage.FirebaseStorage.instance.ref().child('uploads/${DateTime.now().millisecondsSinceEpoch}');
-    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(imagefile);
+    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(_video);
     firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
     taskSnapshot.ref.getDownloadURL().then(
           (value) {
-        imageUrl=value;
-        pr.hide();
+            videoURL=value;
+           pr.hide();
       },
     );
   }
-  Future<File> _chooseGallery() async{
-    await ImagePicker().getImage(source: ImageSource.gallery).then((value) => fileSet(File(value.path)));
 
-  }
-  Future<File> _choosecamera() async{
-    await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
 
-  }
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _chooseGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _choosecamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-    );
-  }
+
+  Future<void> _initializeVideoPlayerFuture;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +92,7 @@ class _AddTrendingState extends State<AddTrending> {
           key: _formKey,
           child: ListView(
             children: [
-              imagefile==null?
+              _video==null?
 
               Container(
                 width: double.infinity,
@@ -114,15 +100,36 @@ class _AddTrendingState extends State<AddTrending> {
                 color: Colors.grey[300],
                 child: GestureDetector(
                   onTap: (){
-                    _showPicker(context);
+                    _pickVideo();
                   },
                   child: Image.asset("assets/images/addVideo.png"),
                 ),
               ):InkWell(
                 onTap: (){
-                  _showPicker(context);
+                  _pickVideo();
                 },
-                child: Image.file(imagefile,height: 200,width: 200,fit: BoxFit.cover,),
+                child: FutureBuilder(
+                  future: _initializeVideoPlayerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      _controller.play();
+                      return Container(
+                        width: double.infinity,
+                        height: 350,
+                        child: AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: VideoPlayer(_controller),
+                        ),
+                      );
+                    } else {
+                      return Container(
+                        color: Colors.blue,
+                        /*child: Image.asset("assets/images/addVideo.png"),*/
+                        //child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
 
               Table(
@@ -133,6 +140,48 @@ class _AddTrendingState extends State<AddTrending> {
                       children: [
                         Container(
                           child: Text('Title',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.only(top: 5),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                                maxLines: 1,
+                                controller: title,
+                                decoration: InputDecoration(hintText:"Enter Title",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              ),
+                            ),
+                            Divider(color: Colors.grey[600],),
+                            Container(
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                                maxLines: 1,
+                                controller: artitle,
+                                decoration: InputDecoration(hintText:"Enter Title (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              ),
+                            ),
+
+                          ],
+                        )
+
+
+                      ]),
+                  TableRow(
+                      children: [
+                        Container(
+                          child: Text('Description',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                           padding: EdgeInsets.all(10),
                           margin: EdgeInsets.only(top: 5),
                         ),
@@ -172,10 +221,35 @@ class _AddTrendingState extends State<AddTrending> {
 
                       ]),
 
+                  TableRow(
+                      children: [
+                        Container(
+                          child: Text('Blog Link',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.only(top: 5),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                                maxLines: 1,
+                                controller: blogLink,
+                                decoration: InputDecoration(hintText:"Enter Title",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              ),
+                            ),
 
 
+                          ],
+                        )
 
 
+                      ]),
 
 
                 ],
@@ -187,10 +261,10 @@ class _AddTrendingState extends State<AddTrending> {
                 child: RaisedButton(
                   onPressed: (){
                     if (_formKey.currentState.validate()) {
-                      if(imageUrl!=null)
+                      if(videoURL!=null)
                         submitData();
                       else
-                        Toast.show("Please add image", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+                        Toast.show("Please add Video", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
                     }
                     else{
                       Toast.show("Enter all the fields", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
@@ -209,4 +283,3 @@ class _AddTrendingState extends State<AddTrending> {
   }
 
 }
-*/

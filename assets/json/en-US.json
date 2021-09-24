@@ -25,6 +25,7 @@
   "details": "Details",
   "type": "Type",
   "bedroom": "Bedroom",
+  "bathroom": "Bathroom",
   "price": "Price",
   "purpose": "Purpose",
   "location": "Location",
@@ -101,7 +102,9 @@
   "trending" : "Trending",
   "noData": "No Data",
   "noPreviousChat" : "No Previous Chat",
-  "message" : "Message"
+  "message" : "Message",
+  "addNotification" : "Add Notification",
+  "myNotification" : "My Notification"
 
 
 }

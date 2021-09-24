@@ -47,11 +47,11 @@ class _FacebookSignInState extends State<FacebookSignIn> {
         });
       },
       child: Container(
-          height: 50,
+          height: 45,
           padding: EdgeInsets.only(left: 10,right: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueAccent),
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(14),
+            color: Color(0xff4267B2),
 
           ),
           alignment: Alignment.center,
@@ -60,8 +60,8 @@ class _FacebookSignInState extends State<FacebookSignIn> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset('assets/images/facebook.png',width: 30,height: 30,),
-              SizedBox(width: 5,),
-              Text("FACEBOOK",style: TextStyle(color: Colors.blueAccent,fontSize: 17,fontWeight: FontWeight.w400),),
+              SizedBox(width: 20,),
+              Text("Sign in with Facebook",style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w400),),
             ],
           )
       ),

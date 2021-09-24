@@ -197,7 +197,7 @@ class _LoginState extends State<Login> {
                   ),
 
                   Container(
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         FacebookSignIn(),

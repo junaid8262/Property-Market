@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/model/property.dart';
+import 'package:propertymarket/screens/MyAdds.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,17 +15,17 @@ import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class PropertyDetail extends StatefulWidget {
+class MyPropertyDetail extends StatefulWidget {
   Property _property;
   bool lang;
 
-  PropertyDetail(this._property,this.lang);
+  MyPropertyDetail(this._property,this.lang);
 
   @override
-  _PropertyDetailState createState() => _PropertyDetailState();
+  _MyPropertyDetailState createState() => _MyPropertyDetailState();
 }
 
-class _PropertyDetailState extends State<PropertyDetail> {
+class _MyPropertyDetailState extends State<MyPropertyDetail> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -618,129 +619,71 @@ class _PropertyDetailState extends State<PropertyDetail> {
               ],
             ),
           ),
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width*1,
+                decoration: BoxDecoration(
+                  //borderRadius: BorderRadius.circular(50),
+                  color: Colors.redAccent,
+                ),
+
+                padding: EdgeInsets.only(top: 10,bottom: 10),
+                child: InkWell(
+                  onTap: ()async{
+                    final databaseReference = FirebaseDatabase.instance.reference();
+                    await databaseReference.child("property").child(widget._property.id).remove().then((value) {
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (BuildContext context) => MyAdds()));
+                    });
+                  },
+                  child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete_outline,color: Colors.white),
+                          Text("Delete",style: TextStyle(color: Colors.white),)
+                        ],
+                      )
+                  ),
+                ),
+              ),
+            ),
+
+
           Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(top: 10,bottom: 10),
-              child:Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              alignment: Alignment.topCenter,
+              child: SafeArea(
+                child: Container(
+                  height: 50,
+                  width: double.maxFinite,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        onTap:()=>launch("tel://${widget._property.whatsapp}"),
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.phone_outlined,color: Colors.white,),
-                              SizedBox(width: 5,),
-                              Text('call'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
-                            ],
-                          )
-                        ),
-                      ),
-                      InkWell(
-                        onTap: (){
-                          final Uri _emailLaunchUri = Uri(
-                              scheme: 'mailto',
-                              host: widget._property.email,
-                              path: widget._property.email,
-                              queryParameters: {
-                                'subject': 'Hi there, I am looking to list a property'
-                              }
-                          );
-                          launch(_emailLaunchUri.toString());
+                      IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        color: _color,
+                        onPressed: (){
+                          Navigator.pop(context);
                         },
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.email_outlined,color: Colors.white,),
-                              SizedBox(width: 5,),
-                              Text('email'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
-                            ],
-                          )
-                        ),
                       ),
-                      InkWell(
-                        onTap: (){
-                          if(Uid != widget._property.addPublisherId)
-                          {
-                            FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot){
-                              Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          Chat(peerId: widget._property.addPublisherId, name: peerSnapshot.value['username'])));
-                            }
-                              //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
-                            );}
-                          else
-                          {
-                            Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
-                            print("cant chat with your self");
-                          }                        },
-                        child: Container(
-                            padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.message,color: Colors.white,),
-                                SizedBox(width: 5,),
-                                Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
-                              ],
-                            )
-                        ),
+                      IconButton(
+                        icon: Icon(_iconData),
+                        color: _color,
+                        onPressed: checkFavourite,
                       ),
+
 
                     ],
                   ),
-
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: SafeArea(
-              child: Container(
-                height: 50,
-                width: double.maxFinite,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      color: _color,
-                      onPressed: (){
-                        Navigator.pop(context);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(_iconData),
-                      color: _color,
-                      onPressed: checkFavourite,
-                    ),
-
-
-                  ],
                 ),
-              ),
-            )
+              )
           )
         ],
       ),
 
-   /*   floatingActionButton: Builder(
+      /*   floatingActionButton: Builder(
         builder: (context) =>Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 10, 50),
         child: FloatingActionButton(
@@ -757,10 +700,10 @@ class _PropertyDetailState extends State<PropertyDetail> {
   Widget _slider(String image) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: NetworkImage(image),
-              fit: BoxFit.cover
-          ),
+        image: DecorationImage(
+            image: NetworkImage(image),
+            fit: BoxFit.cover
+        ),
       ),
     );
   }

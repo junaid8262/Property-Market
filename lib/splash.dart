@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:propertymarket/admin/admin_home.dart';
 import 'package:propertymarket/admin/admin_search_list.dart';
-import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/language_selection.dart';
 import 'package:propertymarket/navigator/bottom_navigation.dart';
-import 'package:propertymarket/screens/home.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:video_player/video_player.dart';
@@ -56,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
       else{
         FirebaseAuth.instance.authStateChanges().listen((User user) {
       if (user == null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Login()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar()));
       } else {
         if(user.uid==adminId){
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AdminSearchList()));
@@ -97,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 );
               } else {
                 return Container(
-                  color: primaryColor,
+                  color: Colors.white,
                   //child: CircularProgressIndicator(),
                 );
               }

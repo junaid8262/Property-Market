@@ -172,7 +172,26 @@ class _PropertyTileState extends State<PropertyTile> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-
+                InkWell(
+                  onTap: (){
+                    launch("tel://${widget.property.whatsapp}");
+                  },
+                  child: Container(
+                      padding: EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.phone_outlined,color: Colors.white,),
+                          SizedBox(width: 5,),
+                          Text('call'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color: Colors.white),),
+                        ],
+                      )
+                  ),
+                ),
+                VerticalDivider(color: Colors.white,),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.all(7),
@@ -234,26 +253,6 @@ class _PropertyTileState extends State<PropertyTile> {
                         Icon(Icons.message,color: Colors.white,),
                         SizedBox(width: 5,),
                         Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color: Colors.white),),
-                      ],
-                    )
-                  ),
-                ),
-                VerticalDivider(color: Colors.white,),
-                InkWell(
-                  onTap: (){
-                    launch("tel://${widget.property.whatsapp}");
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.phone_outlined,color: Colors.white,),
-                        SizedBox(width: 5,),
-                        Text('call'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15,color: Colors.white),),
                       ],
                     )
                   ),

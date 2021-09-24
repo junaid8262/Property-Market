@@ -36,11 +36,19 @@ class _GoogleSigninState extends State<GoogleSignin> {
         });
       },
       child: Container(
-          height: 50,
+          height: 45,
           padding: EdgeInsets.only(left: 10, right: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.red),
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(14),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 3,
+                offset: Offset(3, 3), // changes position of shadow
+              ),
+            ],
           ),
           alignment: Alignment.center,
           margin: EdgeInsets.all(12),
@@ -53,13 +61,13 @@ class _GoogleSigninState extends State<GoogleSignin> {
                 height: 30,
               ),
               SizedBox(
-                width: 5,
+                width: 25,
               ),
               Text(
-                "GOOGLE",
+                "Sign in with Google",
                 style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 17,
+                    color: Colors.black,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400),
               ),
             ],

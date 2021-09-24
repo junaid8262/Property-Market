@@ -146,7 +146,367 @@ class _MyProfileState extends State<MyProfile> {
 
 
             ),
-            Container(
+
+
+
+          ],
+        ),
+      ),
+
+    );
+  }
+
+  Future<List<UserModel>> userData() async {
+    List<UserModel> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("userData").orderByChild('id').equalTo(Uid).once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          UserModel userModel = new UserModel(
+            DATA[individualKey]["token"],
+            DATA[individualKey]["username"],
+            DATA[individualKey]["email"],
+            DATA[individualKey]["profile"],
+            DATA[individualKey]["id"],
+
+          );
+            list.add(userModel);
+        }
+      }
+    });
+    return list;
+  }
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  String getUserId() {
+    // getting current user id
+    final User user = auth.currentUser;
+    return user.uid;
+  }
+  var Uid;
+
+  @override
+  void initState() {
+
+    Uid = this.getUserId();
+    super.initState();
+  }
+
+  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+
+
+  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
+    DateTime date = DateTime.parse(dateString);
+    final date2 = DateTime.now();
+    final difference = date2.difference(date);
+
+    if ((difference.inDays / 365).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} years ago';
+    } else if ((difference.inDays / 365).floor() >= 1) {
+      return (numericDates) ? '1 year ago' : 'Last year';
+    } else if ((difference.inDays / 30).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} months ago';
+    } else if ((difference.inDays / 30).floor() >= 1) {
+      return (numericDates) ? '1 month ago' : 'Last month';
+    } else if ((difference.inDays / 7).floor() >= 2) {
+      return '${(difference.inDays / 7).floor()} weeks ago';
+    } else if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1 week ago' : 'Last week';
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 minute ago' : 'A minute ago';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} seconds ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  Future<List<Property>> getPropertyListApproved() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("approved").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    return list;
+  }
+
+  Future<List<Property>> getPropertyListPending() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("pending").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    return list;
+  }
+
+  Future<List<Property>> getPropertyListRejected() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("rejected").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    return list;
+  }
+
+  File imageFiles;
+  File imagefile;
+  String photoUrl="";
+  bool _progress = false ;
+
+
+  Future uploadImageToFirebase(BuildContext context) async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.show();
+    firebase_storage.Reference firebaseStorageRef = firebase_storage.FirebaseStorage.instance.ref().child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(imagefile);
+    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
+    taskSnapshot.ref.getDownloadURL().then(
+          (value) {
+        photoUrl=value;
+        print("value $value");
+        setState(() {
+          _progress = true;
+          pr.hide();
+          print("user id : $userID");
+                final databaseReference = FirebaseDatabase.instance.reference();
+                databaseReference.child("userData").child(userID).set({
+                  'token':token,
+                  'id' : userID,
+                  'email': email,
+                  'username' : username,
+                  'profile': photoUrl,
+                }).then((value)
+                {
+                  setState(() {
+
+                  });
+                });
+
+
+
+        });
+
+      },
+    ).onError((error, stackTrace){
+      Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+    });
+  }
+
+  void fileSet(File file){
+    setState(() {
+      if(file!=null){
+        imagefile=file;
+      }
+    });
+    uploadImageToFirebase(context);
+  }
+  Future<File> _chooseGallery() async{
+    await ImagePicker().getImage(source: ImageSource.gallery).then((value) => fileSet(File(value.path)));
+
+  }
+  Future<File> _choosecamera() async{
+    await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
+
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _chooseGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _choosecamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+  }
+
+}
+
+
+/*            Container(
               child: Column(
                 children: [
                   DefaultTabController(
@@ -510,359 +870,4 @@ class _MyProfileState extends State<MyProfile> {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-
-    );
-  }
-
-  Future<List<UserModel>> userData() async {
-    List<UserModel> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("userData").orderByChild('id').equalTo(Uid).once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          UserModel userModel = new UserModel(
-            DATA[individualKey]["token"],
-            DATA[individualKey]["username"],
-            DATA[individualKey]["email"],
-            DATA[individualKey]["profile"],
-            DATA[individualKey]["id"],
-
-          );
-            list.add(userModel);
-        }
-      }
-    });
-    return list;
-  }
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  String getUserId() {
-    // getting current user id
-    final User user = auth.currentUser;
-    return user.uid;
-  }
-  var Uid;
-
-  @override
-  void initState() {
-
-    Uid = this.getUserId();
-    super.initState();
-  }
-
-  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
-
-
-  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
-    DateTime date = DateTime.parse(dateString);
-    final date2 = DateTime.now();
-    final difference = date2.difference(date);
-
-    if ((difference.inDays / 365).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} years ago';
-    } else if ((difference.inDays / 365).floor() >= 1) {
-      return (numericDates) ? '1 year ago' : 'Last year';
-    } else if ((difference.inDays / 30).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} months ago';
-    } else if ((difference.inDays / 30).floor() >= 1) {
-      return (numericDates) ? '1 month ago' : 'Last month';
-    } else if ((difference.inDays / 7).floor() >= 2) {
-      return '${(difference.inDays / 7).floor()} weeks ago';
-    } else if ((difference.inDays / 7).floor() >= 1) {
-      return (numericDates) ? '1 week ago' : 'Last week';
-    } else if (difference.inDays >= 2) {
-      return '${difference.inDays} days ago';
-    } else if (difference.inDays >= 1) {
-      return (numericDates) ? '1 day ago' : 'Yesterday';
-    } else if (difference.inHours >= 2) {
-      return '${difference.inHours} hours ago';
-    } else if (difference.inHours >= 1) {
-      return (numericDates) ? '1 hour ago' : 'An hour ago';
-    } else if (difference.inMinutes >= 2) {
-      return '${difference.inMinutes} minutes ago';
-    } else if (difference.inMinutes >= 1) {
-      return (numericDates) ? '1 minute ago' : 'A minute ago';
-    } else if (difference.inSeconds >= 3) {
-      return '${difference.inSeconds} seconds ago';
-    } else {
-      return 'Just now';
-    }
-  }
-
-  Future<List<Property>> getPropertyListApproved() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("approved").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-          {
-            list.add(property);
-          }
-        }
-      }
-    });
-    return list;
-  }
-
-  Future<List<Property>> getPropertyListPending() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("pending").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-          {
-            list.add(property);
-          }
-        }
-      }
-    });
-    return list;
-  }
-
-  Future<List<Property>> getPropertyListRejected() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("rejected").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-          {
-            list.add(property);
-          }
-        }
-      }
-    });
-    return list;
-  }
-
-  File imageFiles;
-  File imagefile;
-  String photoUrl="";
-  bool _progress = false ;
-
-
-  Future uploadImageToFirebase(BuildContext context) async {
-    final ProgressDialog pr = ProgressDialog(context);
-    await pr.show();
-    firebase_storage.Reference firebaseStorageRef = firebase_storage.FirebaseStorage.instance.ref().child('uploads/${DateTime.now().millisecondsSinceEpoch}');
-    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(imagefile);
-    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
-    taskSnapshot.ref.getDownloadURL().then(
-          (value) {
-        photoUrl=value;
-        print("value $value");
-        setState(() {
-          _progress = true;
-          pr.hide();
-          print("user id : $userID");
-                final databaseReference = FirebaseDatabase.instance.reference();
-                databaseReference.child("userData").child(userID).set({
-                  'token':token,
-                  'id' : userID,
-                  'email': email,
-                  'username' : username,
-                  'profile': photoUrl,
-                }).then((value)
-                {
-                  setState(() {
-
-                  });
-                });
-
-
-
-        });
-
-      },
-    ).onError((error, stackTrace){
-      Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-    });
-  }
-
-  void fileSet(File file){
-    setState(() {
-      if(file!=null){
-        imagefile=file;
-      }
-    });
-    uploadImageToFirebase(context);
-  }
-  Future<File> _chooseGallery() async{
-    await ImagePicker().getImage(source: ImageSource.gallery).then((value) => fileSet(File(value.path)));
-
-  }
-  Future<File> _choosecamera() async{
-    await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
-
-  }
-
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _chooseGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _choosecamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-    );
-  }
-
-}
+            ),*/

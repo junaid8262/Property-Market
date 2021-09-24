@@ -335,9 +335,20 @@ class ChatScreenState extends State<ChatScreen> {
             document.get('type') == 0
                 // Text
                 ? Container(
-                    child: Text(
-                      document.get('content'),
-                      style: TextStyle(color: Colors.black),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          document.get('content'),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        Text(
+                          DateFormat('dd MMM kk:mm')
+                              .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                          style: TextStyle(color: Colors.black87, fontSize: 10.0, fontStyle: FontStyle.italic),
+                        ),
+
+                      ],
                     ),
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: 200.0,
@@ -410,7 +421,7 @@ class ChatScreenState extends State<ChatScreen> {
                       )
                     // Sticker
                     : Padding(
-              padding: EdgeInsets.only(top: 8,left:  64 , right:  10 ),
+              padding: EdgeInsets.fromLTRB(10,0,10,10),
               child: Container(
                 width: 200.0,
                 padding: EdgeInsets.all(8),
@@ -418,30 +429,41 @@ class ChatScreenState extends State<ChatScreen> {
                   color:  Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: GestureDetector(
-                    onTap: () {
-                      _loadFile(document.get('content'));
-                    },
-                    onSecondaryTap: () {
-                      stopRecord();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          _loadFile(document.get('content'));
+                        },
+                        onSecondaryTap: () {
+                          stopRecord();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow ,color : Colors.black),
-                            Text(
-                              'Audio',
-                              maxLines: 10,style : TextStyle (
-                              color  : Colors.black,
-                            )
+                            Row(
+                              children: [
+                                Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow ,color : Colors.black),
+                                Text(
+                                  'Audio',
+                                  maxLines: 10,style : TextStyle (
+                                  color  : Colors.black,
+                                )
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                    )),
+                        )),
+                    Text(
+                      DateFormat('dd MMM kk:mm')
+                          .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                      style: TextStyle(color: Colors.black87, fontSize: 10.0, fontStyle: FontStyle.italic),
+                    ),
+
+                  ],
+                ),
               ),
             )
           ],
@@ -489,9 +511,20 @@ class ChatScreenState extends State<ChatScreen> {
                   //     : Container(width: 35.0),
                   document.get('type') == 0
                       ? Container(
-                          child: Text(
-                            document.get('content'),
-                            style: TextStyle(color: Colors.white),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                document.get('content'),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                DateFormat('dd MMM kk:mm')
+                                    .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                                style: TextStyle(color: Colors.white, fontSize: 10.0, fontStyle: FontStyle.italic),
+                              ),
+
+                            ],
                           ),
                           padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                           width: 200.0,
@@ -556,7 +589,7 @@ class ChatScreenState extends State<ChatScreen> {
                               margin: EdgeInsets.only(left: 10.0),
                             )
                           : Padding(
-                    padding: EdgeInsets.only(top: 8,left:  10 , right:  64 ),
+                    padding: EdgeInsets.fromLTRB(10,0,10,0),
                     child: Container(
                       width: 200.0,
                       padding: EdgeInsets.all(8),
@@ -564,36 +597,47 @@ class ChatScreenState extends State<ChatScreen> {
                         color: primaryColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: GestureDetector(
-                          onTap: () {
-                            _loadFile(document.get('content'));
-                          },
-                          onSecondaryTap: () {
-                            stopRecord();
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                _loadFile(document.get('content'));
+                              },
+                              onSecondaryTap: () {
+                                stopRecord();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow  ,color: Colors.white,),
-                                  Text(
-                                    'Audio',
-                                    maxLines: 10,style: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow  ,color: Colors.white,),
+                                      Text(
+                                        'Audio',
+                                        maxLines: 10,style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                            ],
-                          )),
+                              )),
+
+                          Text(
+                            DateFormat('dd MMM kk:mm')
+                                .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                            style: TextStyle(color: Colors.white, fontSize: 10.0, fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],
               ),
 
-              // Time
+/*              // Time
               isLastMessageLeft(index)
                   ? Container(
                       child: Text(
@@ -603,7 +647,7 @@ class ChatScreenState extends State<ChatScreen> {
                       ),
                       margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
                     )
-                  : Container()
+                  : Container()*/
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ),

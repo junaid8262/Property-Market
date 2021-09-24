@@ -244,8 +244,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
           ),
           InkWell(
             onTap: () {
-              /* Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => ViewTrending()));*/
+               Navigator.push(context, new MaterialPageRoute(
+                  builder: (context) => ViewTrending()));
             },
             child: Container(
               height: 40,

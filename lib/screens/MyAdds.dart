@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:propertymarket/model/property.dart';
-import 'package:propertymarket/screens/property_detail.dart';
+import 'package:propertymarket/screens/my_property_details.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -33,219 +33,6 @@ class _MyAddsState extends State<MyAdds> {
 
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
-
-  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
-    DateTime date = DateTime.parse(dateString);
-    final date2 = DateTime.now();
-    final difference = date2.difference(date);
-
-    if ((difference.inDays / 365).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} years ago';
-    } else if ((difference.inDays / 365).floor() >= 1) {
-      return (numericDates) ? '1 year ago' : 'Last year';
-    } else if ((difference.inDays / 30).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} months ago';
-    } else if ((difference.inDays / 30).floor() >= 1) {
-      return (numericDates) ? '1 month ago' : 'Last month';
-    } else if ((difference.inDays / 7).floor() >= 2) {
-      return '${(difference.inDays / 7).floor()} weeks ago';
-    } else if ((difference.inDays / 7).floor() >= 1) {
-      return (numericDates) ? '1 week ago' : 'Last week';
-    } else if (difference.inDays >= 2) {
-      return '${difference.inDays} days ago';
-    } else if (difference.inDays >= 1) {
-      return (numericDates) ? '1 day ago' : 'Yesterday';
-    } else if (difference.inHours >= 2) {
-      return '${difference.inHours} hours ago';
-    } else if (difference.inHours >= 1) {
-      return (numericDates) ? '1 hour ago' : 'An hour ago';
-    } else if (difference.inMinutes >= 2) {
-      return '${difference.inMinutes} minutes ago';
-    } else if (difference.inMinutes >= 1) {
-      return (numericDates) ? '1 minute ago' : 'A minute ago';
-    } else if (difference.inSeconds >= 3) {
-      return '${difference.inSeconds} seconds ago';
-    } else {
-      return 'Just now';
-    }
-  }
-
-  Future<List<Property>> getPropertyListApproved() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("approved").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-            {
-              list.add(property);
-            }
-        }
-      }
-    });
-    return list;
-  }
-
-  Future<List<Property>> getPropertyListPending() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("pending").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-          {
-            list.add(property);
-          }
-        }
-      }
-    });
-    return list;
-  }
-
-  Future<List<Property>> getPropertyListRejected() async {
-    List<Property> list=[];
-    final databaseReference = FirebaseDatabase.instance.reference();
-    await databaseReference.child("property").orderByChild("status").equalTo("rejected").once().then((DataSnapshot dataSnapshot){
-      if(dataSnapshot.value!=null  ){
-        var KEYS= dataSnapshot.value.keys;
-        var DATA=dataSnapshot.value;
-
-        for(var individualKey in KEYS) {
-          Property property = new Property(
-            individualKey,
-            DATA[individualKey]['status'],
-            DATA[individualKey]['addPublisherId'],
-            DATA[individualKey]['image'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['location'],
-            DATA[individualKey]['country'],
-            DATA[individualKey]['city'],
-            DATA[individualKey]['area'],
-            DATA[individualKey]['typeOfProperty'],
-            DATA[individualKey]['propertyCategory'],
-            DATA[individualKey]['whatsapp'].toString(),
-            DATA[individualKey]['call'].toString(),
-            DATA[individualKey]['email'],
-            DATA[individualKey]['beds'].toString(),
-            DATA[individualKey]['bath'].toString(),
-            DATA[individualKey]['measurementArea'].toString(),
-            DATA[individualKey]['datePosted'],
-            DATA[individualKey]['description'],
-            DATA[individualKey]['numericalPrice'],
-            DATA[individualKey]['payment'],
-            DATA[individualKey]['furnish'],
-            DATA[individualKey]['agentName'],
-            DATA[individualKey]['sponsered'],
-            DATA[individualKey]['floor'],
-            DATA[individualKey]['serial'],
-            DATA[individualKey]['name_ar'],
-            DATA[individualKey]['agentName_ar'],
-            DATA[individualKey]['area_ar'],
-            DATA[individualKey]['city_ar'],
-            DATA[individualKey]['country_ar'],
-            DATA[individualKey]['description_ar'],
-            DATA[individualKey]['furnish_ar'],
-            DATA[individualKey]['payment_ar'],
-            DATA[individualKey]['typeOfProperty_ar'],
-            DATA[individualKey]['propertyCategoryAr'],
-            DATA[individualKey]['price_en'],
-            DATA[individualKey]['price_ar'],
-          );
-          if (DATA[individualKey]["addPublisherId"]  == Uid )
-          {
-            list.add(property);
-          }
-        }
-      }
-    });
-    return list;
-  }
 
 
   @override
@@ -317,7 +104,7 @@ class _MyAddsState extends State<MyAdds> {
                                                   SharedPref sp = SharedPref();
                                                   sp.getPref().then((value){
                                                     Navigator.push(
-                                                        context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],value)));
+                                                        context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],value)));
                                                   });
 
                                                 },
@@ -425,7 +212,7 @@ class _MyAddsState extends State<MyAdds> {
                                               return GestureDetector(
                                                 onTap: (){
                                                   Navigator.push(
-                                                      context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],true)));
+                                                      context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],true)));
                                                 },
 
                                                 child: Container(
@@ -530,7 +317,7 @@ class _MyAddsState extends State<MyAdds> {
                                               return GestureDetector(
                                                 onTap: (){
                                                   Navigator.push(
-                                                      context, MaterialPageRoute(builder: (BuildContext context) => PropertyDetail(snapshot.data[index],true)));
+                                                      context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],true)));
                                                 },
 
                                                 child: Container(
@@ -637,6 +424,224 @@ class _MyAddsState extends State<MyAdds> {
       ),
     );
   }
+
+  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
+    DateTime date = DateTime.parse(dateString);
+    final date2 = DateTime.now();
+    final difference = date2.difference(date);
+
+    if ((difference.inDays / 365).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} years ago';
+    } else if ((difference.inDays / 365).floor() >= 1) {
+      return (numericDates) ? '1 year ago' : 'Last year';
+    } else if ((difference.inDays / 30).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} months ago';
+    } else if ((difference.inDays / 30).floor() >= 1) {
+      return (numericDates) ? '1 month ago' : 'Last month';
+    } else if ((difference.inDays / 7).floor() >= 2) {
+      return '${(difference.inDays / 7).floor()} weeks ago';
+    } else if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1 week ago' : 'Last week';
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 minute ago' : 'A minute ago';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} seconds ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  Future<List<Property>> getPropertyListApproved() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("approved").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    list = list.reversed.toList();
+    return list;
+  }
+
+  Future<List<Property>> getPropertyListPending() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("pending").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    list = list.reversed.toList();
+    return list;
+  }
+
+  Future<List<Property>> getPropertyListRejected() async {
+    List<Property> list=[];
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference.child("property").orderByChild("status").equalTo("rejected").once().then((DataSnapshot dataSnapshot){
+      if(dataSnapshot.value!=null  ){
+        var KEYS= dataSnapshot.value.keys;
+        var DATA=dataSnapshot.value;
+
+        for(var individualKey in KEYS) {
+          Property property = new Property(
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
+            DATA[individualKey]['price_en'],
+            DATA[individualKey]['price_ar'],
+          );
+          if (DATA[individualKey]["addPublisherId"]  == Uid )
+          {
+            list.add(property);
+          }
+        }
+      }
+    });
+    list = list.reversed.toList();
+    return list;
+  }
+
+
 
 
 
