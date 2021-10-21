@@ -179,7 +179,10 @@ class _RegisterState extends State<Register> {
                                               'email': user.email,
                                               'username' : userName.trim(),
                                               'profile': photoUrl,
-                                            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())));
+                                            }).then((value) {
+
+                                              Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar()));
+                                            });
 
                                           });
 

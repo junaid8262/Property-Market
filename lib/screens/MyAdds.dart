@@ -26,14 +26,22 @@ class _MyAddsState extends State<MyAdds> {
 
   @override
   void initState() {
-
+    getLang();
     Uid = this.getUserId();
     super.initState();
   }
 
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
-
+  bool  lang = true ;
+  void getLang(){
+  SharedPref sp = SharedPref();
+  sp.getPref().then((value){
+    setState(() {
+      lang  = value;
+    });
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -109,71 +117,7 @@ class _MyAddsState extends State<MyAdds> {
 
                                                 },
 
-                                                child: Container(
-                                                  margin: EdgeInsets.all(5),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                          flex: 3,
-                                                          child: ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: CachedNetworkImage(
-                                                              imageUrl: snapshot.data[index].image[0],
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context, url) => Center(child: CircularProgressIndicator(),),
-                                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                                            ),
-                                                          )
-                                                      ),
-                                                      Expanded(
-                                                          flex: 7,
-                                                          child: Container(
-                                                            margin: EdgeInsets.all(5),
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 10,),
-                                                                Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 7,),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                  children: [
-                                                                    Row(
-                                                                      children: [
-                                                                        Image.asset("assets/images/bed.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].beds),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/bath.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].bath),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/square.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text("${snapshot.data[index].measurementArea} Sq. ft."),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(height: 10,),
-
-                                                              ],
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                ),
+                                                child:PropertyTileAds(snapshot.data[index],lang)
                                               );
                                             });
                                       }
@@ -211,75 +155,14 @@ class _MyAddsState extends State<MyAdds> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                 onTap: (){
-                                                  Navigator.push(
-                                                      context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],true)));
+                                                  SharedPref sp = SharedPref();
+                                                  sp.getPref().then((value){
+                                                    Navigator.push(
+                                                        context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],value)));
+                                                  });
                                                 },
 
-                                                child: Container(
-                                                  margin: EdgeInsets.all(5),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                          flex: 3,
-                                                          child: ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: CachedNetworkImage(
-                                                              imageUrl: snapshot.data[index].image[0],
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context, url) => Center(child: CircularProgressIndicator(),),
-                                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                                            ),
-                                                          )
-                                                      ),
-                                                      Expanded(
-                                                          flex: 7,
-                                                          child: Container(
-                                                            margin: EdgeInsets.all(5),
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 10,),
-                                                                Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 7,),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                  children: [
-                                                                    Row(
-                                                                      children: [
-                                                                        Image.asset("assets/images/bed.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].beds),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/bath.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].bath),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/square.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text("${snapshot.data[index].measurementArea} Sq. ft."),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(height: 10,),
-
-                                                              ],
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                ),
+                                                child: PropertyTileAds(snapshot.data[index],lang)
                                               );
                                             });
                                       }
@@ -316,75 +199,14 @@ class _MyAddsState extends State<MyAdds> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                 onTap: (){
-                                                  Navigator.push(
-                                                      context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],true)));
+                                                  SharedPref sp = SharedPref();
+                                                  sp.getPref().then((value){
+                                                    Navigator.push(
+                                                        context, MaterialPageRoute(builder: (BuildContext context) => MyPropertyDetail(snapshot.data[index],value)));
+                                                  });
                                                 },
 
-                                                child: Container(
-                                                  margin: EdgeInsets.all(5),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                          flex: 3,
-                                                          child: ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: CachedNetworkImage(
-                                                              imageUrl: snapshot.data[index].image[0],
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context, url) => Center(child: CircularProgressIndicator(),),
-                                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                                            ),
-                                                          )
-                                                      ),
-                                                      Expanded(
-                                                          flex: 7,
-                                                          child: Container(
-                                                            margin: EdgeInsets.all(5),
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 10,),
-                                                                Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 5,),
-                                                                Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
-                                                                SizedBox(height: 7,),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                  children: [
-                                                                    Row(
-                                                                      children: [
-                                                                        Image.asset("assets/images/bed.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].beds),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/bath.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text(snapshot.data[index].bath),
-                                                                        SizedBox(width: 5,),
-                                                                        Image.asset("assets/images/square.png",width: 15,height: 15,),
-                                                                        SizedBox(width: 5,),
-                                                                        Text("${snapshot.data[index].measurementArea} Sq. ft."),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(height: 10,),
-
-                                                              ],
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                ),
+                                                child: PropertyTileAds(snapshot.data[index],lang)
                                               );
                                             });
                                       }
@@ -649,3 +471,156 @@ class _MyAddsState extends State<MyAdds> {
 
 
 
+class PropertyTileAds extends StatefulWidget {
+  Property property;
+  bool lang;
+
+  PropertyTileAds(this.property,this.lang);
+
+  @override
+  _PropertyTileAdsState createState() => _PropertyTileAdsState();
+}
+
+class _PropertyTileAdsState extends State<PropertyTileAds> {
+
+
+  static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
+    DateTime date = DateTime.parse(dateString);
+    final date2 = DateTime.now();
+    final difference = date2.difference(date);
+
+    if ((difference.inDays / 365).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} ${'yearAgo'.tr()}';
+    } else if ((difference.inDays / 365).floor() >= 1) {
+      return (numericDates) ? '1yearAgo'.tr() : 'lastYear'.tr();
+    } else if ((difference.inDays / 30).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} ${'monthsAgo'.tr()}';
+    } else if ((difference.inDays / 30).floor() >= 1) {
+      return (numericDates) ? '1monthago'.tr() : 'lastMonth'.tr();
+    } else if ((difference.inDays / 7).floor() >= 2) {
+      return '${(difference.inDays / 7).floor()} ${'weeksAgo'.tr()}';
+    } else if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1weekAgo'.tr() : 'lastWeek'.tr();
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} ${'daysAgo'.tr()}';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1dayAgo'.tr() : 'yesterday'.tr();
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} ${'hoursAgo'.tr()}';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1hourAgo'.tr() : 'anHourAgo'.tr();
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} ${'minutesAgo'.tr()}';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1minuteAgo'.tr() : 'aminuteAgo'.tr();
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} ${'secondsAgo'.tr()}';
+    } else {
+      return 'justNow'.tr();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                    flex: 3,
+                    child: Container(
+                      height: 120,
+                      margin: EdgeInsets.only(left: 5),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.property.image[0],
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(child: CircularProgressIndicator(),),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
+                      ),
+                    )
+                ),
+                Expanded(
+                    flex: 7,
+                    child: Container(
+                      margin: EdgeInsets.all(5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(timeAgoSinceDate(widget.property.datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
+
+                              widget.property.sponsered?Row(
+                                children: [
+                                  Image.asset("assets/images/sponsor.png",width: 20,height: 20,),
+                                  SizedBox(width: 5,),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(right: 5),
+                                    child: Text('sponsored'.tr(),style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),textAlign: TextAlign.center,),
+                                  )
+                                ],
+                              ):Container(),
+                            ],
+                          ),
+
+
+                          Text(widget.lang?widget.property.name:widget.property.name_ar,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
+                          SizedBox(height: 5,),
+                          Text(widget.lang?widget.property.location:"${widget.property.area_ar}, ${widget.property.city_ar}, ${widget.property.country_ar}",style: TextStyle(fontSize: 15,color: Colors.black),),
+                          SizedBox(height: 5,),
+                          Text(widget.lang?"${widget.property.price_en.toString()}":"${widget.property.price_ar.toString()}",style: TextStyle(fontSize: 15,color: Colors.black),),
+                          SizedBox(height: 5,),
+                          Text(widget.lang?"${widget.property.payment.toString()}":"${widget.property.payment_ar.toString()}",style: TextStyle(fontSize: 15,color: Colors.black),),
+                          SizedBox(height: 5,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset("assets/images/bed.png",width: 15,height: 15,),
+                                      SizedBox(width: 5,),
+                                      Text(widget.property.beds),
+                                      SizedBox(width: 5,),
+                                      Image.asset("assets/images/bath.png",width: 15,height: 15,),
+                                      SizedBox(width: 5,),
+                                      Text(widget.property.bath),
+                                      SizedBox(width: 5,),
+                                      Image.asset("assets/images/square.png",width: 15,height: 15,),
+                                      SizedBox(width: 5,),
+                                      Text("${widget.property.measurementArea} m"),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text(widget.lang?"${widget.property.propertyCategory}":"${widget.property.propertyCategoryAr}  ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+
+
+                        ],
+                      ),
+                    )
+                ),
+              ],
+            ),
+
+          ],
+        )
+    );
+  }
+}

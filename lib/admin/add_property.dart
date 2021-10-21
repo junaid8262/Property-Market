@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
@@ -21,6 +22,7 @@ class AddProperty extends StatefulWidget {
 class _AddPropertyState extends State<AddProperty> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
+
 
   String getUserId() {
     // getting current user id
@@ -72,6 +74,10 @@ class _AddPropertyState extends State<AddProperty> {
   String selectedAreaAR="";
   String selectedTypeAR="";
   bool isSponsered=false;
+
+
+
+
 
   Future<List<LocationModel>> getCountryList() async {
     List<LocationModel> list=new List();
@@ -299,8 +305,7 @@ class _AddPropertyState extends State<AddProperty> {
                                   setState(() {
                                     cityController.text =
                                         snapshot.data[index].name;
-                                    selectedCityAR =
-                                        snapshot.data[index].name_ar;
+                                    selectedCityAR =snapshot.data[index].name_ar;
                                     selectedCityId = snapshot.data[index].id;
                                   });
                                   Navigator.pop(context);
@@ -558,9 +563,17 @@ class _AddPropertyState extends State<AddProperty> {
       'typeOfProperty_ar': selectedTypeAR,
 
     }).then((value) {
-      sendNotification();
-      Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AddProperty()));
+      if(getUserId() == adminId)
+        {
+          sendNotification();
+          Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AddProperty()));
+        }
+      else
+        {
+          Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        }
+
 
 
     }).catchError((onError){
@@ -582,7 +595,7 @@ class _AddPropertyState extends State<AddProperty> {
         <String, dynamic>{
           'notification': <String, dynamic>{
             'body': 'New Property Added',
-            'title': 'New property added from ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}'
+            'title': 'New property added in ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}'
           },
           'priority': 'high',
           'data': <String, dynamic>{
@@ -814,7 +827,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               maxLines: 1,
                               controller: wordPriceController,
-                              decoration: InputDecoration(hintText:"Enter Name",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:"Enter Name (English)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -899,7 +912,7 @@ class _AddPropertyState extends State<AddProperty> {
                           },
                           controller:snoController,
                           maxLines: 1,
-                          decoration: InputDecoration(hintText:"Enter Serial Number",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:"Enter Serial No (Any Number)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
@@ -1015,7 +1028,7 @@ class _AddPropertyState extends State<AddProperty> {
                                 return null;
                               },
                               controller: descriptionController,
-                              decoration: InputDecoration(hintText:"Property Description",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:"Property Description (English)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -1420,7 +1433,7 @@ class _AddPropertyState extends State<AddProperty> {
 
         for(var individualKey in KEYS) {
 
-          if( DATA[individualKey]['country'] == countryController.text && DATA[individualKey]['city']  == cityController.text && DATA[individualKey]['area'] == areaController.text &&  DATA[individualKey]['propertyCategory'] == category)
+          if( DATA[individualKey]['country'] == countryController.text && DATA[individualKey]['city']  == cityController.text && DATA[individualKey]['area'] == areaController.text &&  DATA[individualKey]['propertyCategory'] == category && DATA[individualKey]['type'] == typeController.text )
             {
               FirebaseDatabase.instance.reference().child("userData").child(DATA[individualKey]['userid']).once().then((DataSnapshot userSnapshot)
                   {

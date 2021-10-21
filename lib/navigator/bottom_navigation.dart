@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,9 @@ import 'package:propertymarket/screens/news.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
-import 'package:flashy_tab_bar/flashy_tab_bar.dart';
-/*class BottomBar extends StatefulWidget {
+import 'package:badges/badges.dart';
+
+class BottomBar extends StatefulWidget {
 
   @override
   _BottomNavigationState createState() => new _BottomNavigationState();
@@ -43,13 +45,7 @@ class _BottomNavigationState extends State<BottomBar>{
     });
     return _myInfo;
   }
-  logout()async{
-    await FirebaseAuth.instance.signOut().whenComplete((){
-      Navigator.push(
-          context, MaterialPageRoute(builder: (BuildContext context) => Login()));
-    });
-  }
-  _showInfoDailog() async {
+/*  _showInfoDailog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -182,10 +178,12 @@ class _BottomNavigationState extends State<BottomBar>{
         );
       },
     );
-  }
+  }*/
   AdmobBannerSize bannerSize;
   AdmobInterstitial interstitialAd;
-
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  User _user=FirebaseAuth.instance.currentUser;
+  bool areUnreadMessages=false;
   @override
   void initState() {
     super.initState();
@@ -194,14 +192,10 @@ class _BottomNavigationState extends State<BottomBar>{
     _children = [
       HomePage(),
       News(),
-      //language
-      Container(),
-
-      //contact info
-      Container(),
-      //logout
-      Container(),
-      FavouriteList(),
+      Trending(),
+      MyChats(),
+      Notify(),
+      AddProperty(),
 
 
     ];
@@ -290,32 +284,79 @@ class _BottomNavigationState extends State<BottomBar>{
       }
     }
     else if(index==2){
-      _showChangeLanguageDailog();
-    }
-    else if(index==3){
-      _showInfoDailog();
-    }
-
-    else if(index==4){
-      logout();
-    }
-    else if(index==5){
-      User user=FirebaseAuth.instance.currentUser;
-      if(user==null){
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Login()));
-      }
-      else{
+      if (await interstitialAd.isLoaded) {
+        interstitialAd.show();
         setState(() {
           _currentIndex = index;
         });
       }
+      else {
+        setState(() {
+          _currentIndex = index;
+        });
+      }
+    }
+    else if(index==3){
+      User user=FirebaseAuth.instance.currentUser;
+      if(user == null)
+      {
+        print("hello");
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (context) => Login()));
+      }
+      else
+      {
+        setState(() {
+          _currentIndex = index;
+        });
+      }
+    }
+
+    else if(index==4){
+      User user=FirebaseAuth.instance.currentUser;
+      if(user == null)
+      {
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (context) => Login()));
+      }
+      else
+      {
+        setState(() {
+          _currentIndex = index;
+        });
+      }
+    }
+    else if(index==5){
+      User user=FirebaseAuth.instance.currentUser;
+      if(user == null)
+      {
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (context) => Login()));
+      }
+      else{
+
+        if (await interstitialAd.isLoaded) {
+          interstitialAd.show();
+          setState(() {
+            _currentIndex = index;
+          });
+        }
+        else {
+          setState(() {
+            _currentIndex = index;
+          });
+        }
+
+      }
 
     }
 
-
   }
-
-
+  String getUid() {
+    final User user = auth.currentUser;
+    final uId = user.uid;
+    return uId;
+  }
 
 
   @override
@@ -339,28 +380,120 @@ class _BottomNavigationState extends State<BottomBar>{
               label: 'news'.tr()
           ),
           BottomNavigationBarItem(
-            icon: new Icon(Icons.language_outlined),
-              label: 'language'.tr()
+            icon: new Icon(Icons.trending_up_rounded),
+              label: 'trending'.tr()
           ),
           BottomNavigationBarItem(
+
+              icon: _user == null ?  Icon(Icons.chat) : StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('unseen Message').doc(getUid()).collection('unseen Message').snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+                  if(snapshot.data != null)
+                  {
+                    int i=0;
+
+                    snapshot.data.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                      i+=data['unseen'];
+                    }).toList();
+                    print("total unseen messages $i");
+                    if(i>0){
+                      return Badge(
+                        badgeContent: Text("$i",style: TextStyle(color: Colors.white),),
+                        child: Icon(Icons.chat),
+                      );
+
+                    }
+                    else{
+
+                      return Icon(Icons.chat);
+                    }
+
+                  }
+                  else {
+                    return  Icon(Icons.chat);
+                  }
+                },
+              ),
+              label: 'myChat'.tr()
+          ),
+          BottomNavigationBarItem(
+
+              icon: Icon(Icons.notifications),
+              label: "notification".tr(),
+          ),
+          BottomNavigationBarItem(
+
               icon: Icon(Icons.add),
               label: 'add'.tr()
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.vpn_key_outlined),
-              label: FirebaseAuth.instance.currentUser==null?'login'.tr():'logout'.tr()
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
-              label: 'favourite'.tr()
           ),
         ],
       ),
       body: _children[_currentIndex],
     );
   }
-}*/
+  Future<bool> dataExist(String uid) async  {
+    bool exsist  ;
+    try {
+      print("No Error");
+      await FirebaseFirestore.instance.collection('unseen Message').doc(getUid()).get().then((doc) {
+        print(doc.exists);
+        exsist = doc.exists;
 
+      });
+    } catch (e) {
+      print("error fetching");
+      exsist =  false;
+    }
+
+    return exsist;
+
+  }
+
+  var unseen = 0 ;
+
+   totalUnseen() {
+    FirebaseFirestore.instance
+        .collection('unseen Message').doc(getUid()).collection('unseen Message')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+          if(querySnapshot.size > 0)
+            {
+              querySnapshot.docs.forEach((doc) {
+                setState(() {
+                  unseen = unseen+doc["unseen"];
+                });
+                print(doc["unseen"]);
+              });
+
+            }
+
+    });
+  }
+/*
+  Stream<int> getTotalUnReadMessages()async*{
+    int i=0;
+     await FirebaseFirestore.instance
+        .collection('unseen Message').doc(getUid()).collection('unseen Message')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        yield* i;
+        setState(() {
+          i=i+doc['unseen'];
+          yield ;
+        });
+      });
+    });
+  }
+*/
+}
+
+
+
+
+/*
 
 class BottomBar extends StatefulWidget {
 
@@ -676,3 +809,4 @@ class _BottomNavigationState extends State<BottomBar>{
     );
   }
 }
+*/

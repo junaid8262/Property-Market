@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
@@ -13,6 +15,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+int indexImage = 0 ;
 
 class PropertyDetail extends StatefulWidget {
   Property _property;
@@ -30,7 +33,15 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
   String getUid() {
     final User user = auth.currentUser;
-    return user.uid;
+    if(user.uid == null )
+      {
+        return "";
+      }
+    else
+      {
+        return user.uid;
+
+      }
     // here you write the codes to input the data into firestore
   }
 
@@ -43,13 +54,30 @@ class _PropertyDetailState extends State<PropertyDetail> {
   AdmobInterstitial interstitialAd;
   bool isAdmobLoadedForBanner=true;
   bool isAdmobLoadedForInterstitial=true;
-  String Uid;
+  String userAvatar = "" ,userName = "";
+
+  void profilePic()  {
+    FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot) {
+      setState(() {
+        userAvatar = peerSnapshot.value['profile'];
+      });
+    });
+  }
+
+  void getuserName(){
+    FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot) {
+      setState(() {
+        userName = peerSnapshot.value['username'];
+      });
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Uid = getUid();
+    profilePic();
+    getuserName();
     Admob.requestTrackingAuthorization();
     bannerSize = AdmobBannerSize.LARGE_BANNER;
 
@@ -218,6 +246,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -229,35 +258,54 @@ class _PropertyDetailState extends State<PropertyDetail> {
               children: [
                 Container(
                   height: 250,
-                  child: ImageSlideshow(
 
-                    /// Width of the [ImageSlideshow].
-                    width: double.infinity,
-
-
-                    /// The page to show when first creating the [ImageSlideshow].
-                    initialPage: 0,
-
-                    /// The color to paint the indicator.
-                    indicatorColor: Colors.blue,
-
-                    /// The color to paint behind th indicator.
-                    indicatorBackgroundColor: Colors.white,
-
-
-                    /// The widgets to display in the [ImageSlideshow].
-                    /// Add the sample image file into the images folder
-                    children: slideShowWidget,
-
-                    /// Called whenever the page in the center of the viewport changes.
-                    onPageChanged: (value) {
-                      print('Page changed: $value');
+                  child : InkWell(
+                    onTap: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) {
+                            return FullScreenImage(
+                              imageUrl: widget._property.image[indexImage],
+                              tag: "generate_a_unique_tag1",
+                            );
+                          }));
                     },
+                    child: Hero(
+                     child: ImageSlideshow(
+                      /// Width of the [ImageSlideshow].
+                      width: double.infinity,
 
-                    /// Auto scroll interval.
-                    /// Do not auto scroll with null or 0.
-                    autoPlayInterval: 10000,
+
+                      /// The page to show when first creating the [ImageSlideshow].
+                      initialPage: 0,
+
+                      /// The color to paint the indicator.
+                      indicatorColor: Colors.blue,
+
+                      /// The color to paint behind th indicator.
+                      indicatorBackgroundColor: Colors.white,
+
+
+                      /// The widgets to display in the [ImageSlideshow].
+                      /// Add the sample image file into the images folder
+                      children: slideShowWidget,
+
+                      /// Called whenever the page in the center of the viewport changes.
+                      onPageChanged: (value) {
+                        setState(() {
+                          indexImage = value;
+                        });
+                        print('Page changed: $value');
+                      },
+
+                      /// Auto scroll interval.
+                      /// Do not auto scroll with null or 0.
+                      autoPlayInterval: 1000000,
+                    ),
+
+                      tag: "generate_a_unique_tag1",
+                    ),
                   ),
+
                 ),
 
 
@@ -618,17 +666,64 @@ class _PropertyDetailState extends State<PropertyDetail> {
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(top: 10,bottom: 10),
-              child:Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                        onTap:()=>launch("tel://${widget._property.whatsapp}"),
-                        child: Container(
+
+          Positioned(
+            bottom: 0,
+            child:  Container(
+              width: MediaQuery.of(context).size.width*1,
+            color: Colors.white,
+            padding: EdgeInsets.only(top: 10,bottom: 10),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12,0,0,5),
+                  child: Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12,0,0,5),
+                      child: Material(
+                        child: Image.network(userAvatar,loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
+                              value: loadingProgress.expectedTotalBytes != null &&
+                                  loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
+                          );
+                        },
+                          errorBuilder: (context, object, stackTrace) {
+                            return Icon(
+                              Icons.account_circle,
+                              size: 35,
+                              color: Colors.grey,
+                            );
+                          },
+                          width: 35,
+                          height: 35,
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(18.0),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(userName),
+                    ),
+                  ],),
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap:()=>launch("tel://${widget._property.whatsapp}"),
+                      child: Container(
                           padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
                           decoration: BoxDecoration(
                             color: primaryColor,
@@ -641,21 +736,21 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               Text('call'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
                             ],
                           )
-                        ),
                       ),
-                      InkWell(
-                        onTap: (){
-                          final Uri _emailLaunchUri = Uri(
-                              scheme: 'mailto',
-                              host: widget._property.email,
-                              path: widget._property.email,
-                              queryParameters: {
-                                'subject': 'Hi there, I am looking to list a property'
-                              }
-                          );
-                          launch(_emailLaunchUri.toString());
-                        },
-                        child: Container(
+                    ),
+                    InkWell(
+                      onTap: (){
+                        final Uri _emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            host: widget._property.email,
+                            path: widget._property.email,
+                            queryParameters: {
+                              'subject': 'Hi there, I am looking to list a property'
+                            }
+                        );
+                        launch(_emailLaunchUri.toString());
+                      },
+                      child: Container(
                           padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
                           decoration: BoxDecoration(
                             color: primaryColor,
@@ -668,47 +763,62 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               Text('email'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
                             ],
                           )
-                        ),
                       ),
-                      InkWell(
-                        onTap: (){
-                          if(Uid != widget._property.addPublisherId)
+                    ),
+                    InkWell(
+                      onTap: (){
+                        User user=FirebaseAuth.instance.currentUser;
+                        if(user == null)
                           {
-                            FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot){
-                              Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                          Chat(peerId: widget._property.addPublisherId, name: peerSnapshot.value['username'])));
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => Login()));
+                          }
+                        else
+                          {
+                            if(getUid() != widget._property.addPublisherId)
+                            {
+                              FirebaseDatabase.instance.reference().child("userData").child(widget._property.addPublisherId).once().then((DataSnapshot peerSnapshot){
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(builder: (context) =>Chat(peerId: widget._property.addPublisherId, name: peerSnapshot.value['username'])));
+                              }
+                                //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
+                              );}
+                            else
+                            {
+                              Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
+                              print("cant chat with your self");
                             }
-                              //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
-                            );}
-                          else
-                          {
-                            Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
-                            print("cant chat with your self");
-                          }                        },
-                        child: Container(
-                            padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.message,color: Colors.white,),
-                                SizedBox(width: 5,),
-                                Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
-                              ],
-                            )
-                        ),
+                          }
+
+                        },
+                      child: Container(
+                          padding: EdgeInsets.only(left: 10,right: 10,top: 7,bottom: 7),
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.message,color: Colors.white,),
+                              SizedBox(width: 5,),
+                              Text('message'.tr(),style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Colors.white),),
+                            ],
+                          )
                       ),
+                    ),
 
-                    ],
-                  ),
-
+                  ],
+                ),
+              ],
             ),
-          ),
+
+
+          ),),
+        /*  Align(
+            alignment: Alignment.bottomCenter,
+            child:
+          ),*/
           Align(
             alignment: Alignment.topCenter,
             child: SafeArea(
@@ -761,6 +871,43 @@ class _PropertyDetailState extends State<PropertyDetail> {
               image: NetworkImage(image),
               fit: BoxFit.cover
           ),
+      ),
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final String imageUrl;
+  final String tag;
+
+  const FullScreenImage({Key key, this.imageUrl, this.tag}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+              tag: tag,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image : NetworkImage(
+                        imageUrl,
+                      ),
+                      fit: BoxFit.contain,
+
+                    )
+                ),
+              )
+          ),
+        ),
+        onTap: () {
+          indexImage = 0 ;
+          Navigator.pop(context);
+        },
       ),
     );
   }

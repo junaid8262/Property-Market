@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
@@ -35,7 +36,7 @@ class _PropertyTileState extends State<PropertyTile> {
     } else if ((difference.inDays / 30).floor() >= 2) {
       return '${(difference.inDays / 365).floor()} ${'monthsAgo'.tr()}';
     } else if ((difference.inDays / 30).floor() >= 1) {
-      return (numericDates) ? '1 month ago'.tr() : 'lastMonth'.tr();
+      return (numericDates) ? '1monthAgo'.tr() : 'lastMonth'.tr();
     } else if ((difference.inDays / 7).floor() >= 2) {
       return '${(difference.inDays / 7).floor()} ${'weeksAgo'.tr()}';
     } else if ((difference.inDays / 7).floor() >= 1) {
@@ -225,22 +226,35 @@ class _PropertyTileState extends State<PropertyTile> {
                   onTap: (){
 
                     User user = FirebaseAuth.instance.currentUser;
-                    if(user.uid != widget.property.addPublisherId)
-                    {
-                      FirebaseDatabase.instance.reference().child("userData").child(widget.property.addPublisherId).once().then((DataSnapshot peerSnapshot){
+                    if(user == null)
+                      {
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    Chat(peerId: widget.property.addPublisherId, name: peerSnapshot.value['username'])));
+                                    Login()));
                       }
-                        //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
-                      );}
                     else
-                    {
-                      Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
-                      print("cant chat with your self");
-                    }
+                      {
+                        if(user.uid != widget.property.addPublisherId )
+                        {
+                          FirebaseDatabase.instance.reference().child("userData").child(widget.property.addPublisherId).once().then((DataSnapshot peerSnapshot){
+                            Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                        Chat(peerId: widget.property.addPublisherId, name: peerSnapshot.value['username'])));
+                          }
+                            //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Chat(peerId: widget._property.addPublisherId,name: widget._property.agentName,)));
+                          );}
+                        else
+                        {
+                          Toast.show("Cant Chat With Yourself", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP,textColor: Colors.white , backgroundColor: primaryColor);
+                          print("cant chat with your self");
+                        }
+                      }
+
+
                   },
                   child: Container(
                     padding: EdgeInsets.all(7),

@@ -8,11 +8,8 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/MyAdds.dart';
-import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:toast/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class MyPropertyDetail extends StatefulWidget {

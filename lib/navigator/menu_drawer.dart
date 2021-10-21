@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -163,7 +164,7 @@ class MenuDrawerState extends State<MenuDrawer> {
             },
             child: Container(
               alignment: Alignment.center,
-              child: Image.asset('icon'.tr(), height: 150,),
+              child: Image.asset('icon'.tr(), height: 150,fit: BoxFit.fitWidth,),
             ),
           ),
 
@@ -277,12 +278,22 @@ class MenuDrawerState extends State<MenuDrawer> {
               User user = FirebaseAuth.instance.currentUser;
              // SharedPref sp = SharedPref();
               if (user != null) {
-                _signOut().whenComplete(() {
+                final FirebaseAuth _auth = FirebaseAuth.instance;
+                final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+                await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
+                  "isOnline": false,
+                });
+                _signOut().then((value) {
                  // sp.setIsLogin(false);
                   Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => Login()));
+                      builder: (context) => BottomBar()));
                 });
               }
+              else
+                {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => Login()));
+                }
 
             },
             child: Container(

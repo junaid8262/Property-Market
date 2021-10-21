@@ -1,3 +1,5 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:propertymarket/auth/Facebook_SignIn.dart';
 import 'package:toast/toast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -127,23 +129,53 @@ class _LoginState extends State<Login> {
                                 await FirebaseAuth.instance.signInWithEmailAndPassword(
                                     email: email,
                                     password: password
-                                ).whenComplete(() {
+                                ).then((value) {
                                   User user=FirebaseAuth.instance.currentUser;
                                   if (user == null) {
                                     print('User is currently signed out!');
                                     Toast.show("User Not Registered", context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
                                     pr.hide();
                                   } else {
-                                    print('User is signed in!');
-                                    if(user.uid==adminId){
-                                      pr.hide();
-                                      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: AdminSearchList()));
-                                    }
-                                    else{
-                                      pr.hide();
-                                      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar()));
 
-                                    }
+                                  FirebaseDatabase.instance.reference().child("userData").child(user.uid).once().then((DataSnapshot userSnapshot){
+                                    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+                                    _firebaseMessaging.subscribeToTopic('user');
+                                    _firebaseMessaging.getToken().then((value) {
+
+                                        if(userSnapshot.value['token'] != value.toString())
+                                          {
+                                            final databaseReference = FirebaseDatabase.instance.reference();
+                                            databaseReference.child("userData").child(user.uid).set({
+                                              'token':value,
+                                              'id' : userSnapshot.value['id'],
+                                              'email': userSnapshot.value['email'],
+                                              'username' : userSnapshot.value['username'],
+                                              'profile': userSnapshot.value['profile'],
+                                            });
+                                          }
+                                    }).onError((error, stackTrace)
+                                    {
+                                      Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.TOP);
+
+                                    });
+
+                                  }).then((value) => {
+
+                                  if(user.uid==adminId){
+                                      pr.hide(),
+                                  Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: AdminSearchList())),
+                                  }
+                                  else{
+                                  pr.hide(),
+                                  Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())),
+
+                                  }
+
+                                  });
+
+
+
+
 
                                   }
                                 });

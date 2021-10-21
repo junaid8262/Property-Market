@@ -6,7 +6,7 @@
   "changeLanguage": "Change Language",
   "addProperty": "Add Property",
   "findProperty": "Find Property",
-  "filter": "filter",
+  "filter" : "Filter",
   "sort": "sort",
   "arabic": "Arabic",
   "buy": "Buy",
@@ -33,7 +33,7 @@
   "sortBy": "Sort By",
   "LowToHigh": "Prices Low to High",
   "HighToLow": "Prices High to Low",
-  "icon": "assets/images/logo_english.jpeg",
+  "icon": "assets/images/logoEnglish.png",
   "noData": "No Data Found",
   "payment": "Payment Type",
   "furnish":"Furnishing",
@@ -98,13 +98,15 @@
   "rejected" : "Rejected",
   "typeYourMessage" : "Type your message...",
   "Notify" : "Notify",
-  "myNotification" :  "My Notification",
+  "myNotifications" :  "My Notification",
   "trending" : "Trending",
-  "noData": "No Data",
   "noPreviousChat" : "No Previous Chat",
-  "message" : "Message",
+  "message" : "Chat",
   "addNotification" : "Add Notification",
-  "myNotification" : "My Notification"
+  "myNotification" : "My Notification",
+  "notifyNote" : "Notify Me About The Newly Added Property In Specific Area",
+  "ShowDetail" : "Show more Detail"
+
 
 
 }

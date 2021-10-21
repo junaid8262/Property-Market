@@ -190,7 +190,7 @@ class _MyChatsState extends State<MyChats> {
                     },
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance.collection('unseen Message').doc(uId).collection('unseen Message').doc(snapshot.data[index].id).snapshots() ;
+
                       return Container(
                         child: Column(
                           children: [
@@ -222,18 +222,39 @@ class _MyChatsState extends State<MyChats> {
                                     ),
                                   ),
                                 ),
-                                StreamBuilder<DocumentSnapshot>(
-                                  stream:  _usersStream,
-                                  builder: ( BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshots){
-                                    if(snapshots.data != null )
+
+
+
+                                FutureBuilder<bool>(
+                                  future : dataExist( snapshot.data[index].id),
+                                  builder: (context, snapshots1)
+                                  {
+                                    print("data snapshot");
+                                    print("data  ${snapshots1.data}");
+                                    print("Connnection  : ${snapshots1.connectionState}");
+                                    if(snapshots1.connectionState == ConnectionState.waiting)
                                       {
-                                            if(snapshots.data['unseen'] == 0)
+                                        return CircularProgressIndicator();
+                                      }
+
+
+                                    if(snapshots1.data && snapshots1.connectionState == ConnectionState.done)
+                                    {
+                                      print("data exisit ${snapshots1.data}");
+                                      if(snapshots1.data == true)
+                                        {
+                                          return StreamBuilder<DocumentSnapshot>(
+                                            stream:  FirebaseFirestore.instance.collection('unseen Message').doc(uId).collection('unseen Message').doc(snapshot.data[index].id).snapshots() ,
+                                            builder: ( BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshots){
+                                              if(snapshots.data != null )
                                               {
-                                               Container();
-                                              }
-                                            else
-                                              {
-                                                if(snapshots.data['unseen'] >= 100)
+                                                if(snapshots.data['unseen'] == 0)
+                                                {
+                                                  Container();
+                                                }
+                                                else
+                                                {
+                                                  if(snapshots.data['unseen'] >= 100)
                                                   {
                                                     return Container(
                                                       height: 25,
@@ -249,7 +270,7 @@ class _MyChatsState extends State<MyChats> {
                                                       ),),),
                                                     );
                                                   }
-                                                else
+                                                  else
                                                   {
                                                     return Container(
                                                       height: 25,
@@ -266,14 +287,34 @@ class _MyChatsState extends State<MyChats> {
                                                     );
 
                                                   }
+                                                }
+
+
+
                                               }
 
+                                              return Container();
+                                            },
+                                          );
+                                        }
+                                      else
+                                        {
+                                          return Container();
+                                        }
 
-
+                                    }
+                                    else if (snapshots1.data == null)
+                                      {
+                                        return CircularProgressIndicator();
                                       }
-                                    return Container();
+                                    else
+                                      {
+                                        return Container();
+                                      }
                                   },
                                 ),
+
+
 /*
                                 messageIndex == "0" ? Container() : ,
 */
@@ -341,6 +382,24 @@ class _MyChatsState extends State<MyChats> {
     });
   }
 
+  Future<bool> dataExist(String uid) async  {
+    bool exsist  ;
+    try {
+      print("No Error");
+      await FirebaseFirestore.instance.collection('unseen Message').doc(uId).collection('unseen Message').doc(uid).get().then((doc) {
+        print(doc.exists);
+        exsist = doc.exists;
+
+      });
+    } catch (e) {
+      print("error fetching");
+      exsist =  false;
+    }
+
+    return exsist;
+
+  }
+
 
   Future<List<PeerUser>> userData() async {
     List<PeerUser> list = [];
@@ -387,3 +446,5 @@ class Loading extends StatelessWidget {
     );
   }
 }
+
+

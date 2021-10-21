@@ -1381,7 +1381,10 @@ class _EditPropertyState extends State<EditProperty> {
                       {
                         status = "approved";
                         submitData();
+                        sendNotification();
+                        approvedNotification();
                         getNotificationUser();
+
                       }
                       else
                         Toast.show("Please add atleast on image", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
@@ -1440,8 +1443,67 @@ class _EditPropertyState extends State<EditProperty> {
         )
     );
   }
-  Future getNotificationUser ()async
-  {
+
+  sendNotification() async{
+    String url='https://fcm.googleapis.com/fcm/send';
+    Uri myUri = Uri.parse(url);
+    await http.post(
+      myUri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverToken',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'New property added from ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}',
+            'title': 'New Property Added'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          'to': "/topics/user",
+        },
+      ),
+    );
+  }
+
+  approvedNotification() {
+    FirebaseDatabase.instance.reference().child("userData").child(widget.property.addPublisherId).once().then((DataSnapshot userSnapshot) async {
+      String url='https://fcm.googleapis.com/fcm/send';
+      Uri myUri = Uri.parse(url);
+      await http.post(
+        myUri,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$serverToken',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'body':  'Property You Added Is live for Million Of Users' ,
+              'title': 'Your Property Is Added'
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'id': '1',
+              'status': 'done'
+            },
+            'to': userSnapshot.value['token'],
+          },
+        ),
+      );
+
+    });
+
+  }
+
+
+  Future getNotificationUser ()async  {
     String category ;
     isRent ? category = "rent" : category = "buy" ;
     final databaseReference = FirebaseDatabase.instance.reference();
@@ -1464,6 +1526,7 @@ class _EditPropertyState extends State<EditProperty> {
       }
     });
   }
+
   sendPropertyNotification(String token) async{
     String url='https://fcm.googleapis.com/fcm/send';
     Uri myUri = Uri.parse(url);

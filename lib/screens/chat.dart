@@ -21,19 +21,61 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:record_mp3/record_mp3.dart';
 import 'package:just_audio/just_audio.dart';
 
+
+// Note online status must get check
+
+
+
+
 class Chat extends StatelessWidget {
   final String peerId ,name;
 
   Chat({Key key,  this.peerId,this.name }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text(
-          name,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Column(
+          children: [
+            Text(
+              name,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+
+            StreamBuilder<DocumentSnapshot>(
+              stream:  FirebaseFirestore.instance.collection('user status').doc(peerId).snapshots() ,
+              builder: ( BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshots){
+
+                if(snapshots.data != null ){
+                  if(snapshots.data['isOnline'])
+                    {
+
+
+                      return Text("online",style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),);
+                    }
+                  else
+                    {
+                      return Text("offline",style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),);
+                    }
+                }
+                else {
+                    return Container();
+                }
+
+              },
+            ),
+
+
+    ],
         ),
         centerTitle: true,
       ),
@@ -73,6 +115,8 @@ class ChatScreenState extends State<ChatScreen> {
   int unseenMessageNo ;
   String recordFilePath;
   int i = 0;
+  int tempIndex;
+  String peerAvatar = "", userAvatar = "";
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -135,10 +179,23 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void profilePic()  {
+    FirebaseDatabase.instance.reference().child("userData").child(peerId).once().then((DataSnapshot peerSnapshot) {
+      setState(() {
+        peerAvatar = peerSnapshot.value['profile'];
+      });
+    });
+    FirebaseDatabase.instance.reference().child("userData").child(id).once().then((DataSnapshot userSnapshot) {
+      setState(() {
+        userAvatar = userSnapshot.value['profile'];
+      });
+    });
+  }
 
   @override
   void initState() {
     id = getUid();
+    profilePic();
     super.initState();
     focusNode.addListener(onFocusChange);
     listScrollController.addListener(_scrollListener);
@@ -324,6 +381,7 @@ class ChatScreenState extends State<ChatScreen> {
         },
       ),
     );
+
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {
@@ -332,20 +390,26 @@ class ChatScreenState extends State<ChatScreen> {
         // Right (my message)
         return Row(
           children: <Widget>[
+
             document.get('type') == 0
                 // Text
                 ? Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Text(
                           document.get('content'),
                           style: TextStyle(color: Colors.black),
                         ),
-                        Text(
-                          DateFormat('dd MMM kk:mm')
-                              .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
-                          style: TextStyle(color: Colors.black87, fontSize: 10.0, fontStyle: FontStyle.italic),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Text(
+                            DateFormat('dd MMM kk:mm')
+                                .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                            style: TextStyle(color: Colors.black87, fontSize: 10.0, fontStyle: FontStyle.italic),
+                          ),
                         ),
 
                       ],
@@ -434,18 +498,22 @@ class ChatScreenState extends State<ChatScreen> {
                   children: [
                     GestureDetector(
                         onTap: () {
+                          print("first tap");
                           _loadFile(document.get('content'));
+                          tempIndex = index;
                         },
-                        onSecondaryTap: () {
-                          stopRecord();
+                        onTapCancel: (){
+                          print("second tap");
+                          RecordMp3.instance.stop();
                         },
+
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Row(
                               children: [
-                                Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow ,color : Colors.black),
+                                isPlayingMsg && tempIndex == index  ?  Icon( Icons.cancel  ,color : Colors.black) :Icon( Icons.play_arrow  ,color : Colors.black) ,
                                 Text(
                                   'Audio',
                                   maxLines: 10,style : TextStyle (
@@ -465,7 +533,42 @@ class ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-            )
+            ),
+
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Material(
+                child: Image.network(userAvatar,loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                      value: loadingProgress.expectedTotalBytes != null &&
+                          loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                          : null,
+                    ),
+                  );
+                },
+                  errorBuilder: (context, object, stackTrace) {
+                    return Icon(
+                      Icons.account_circle,
+                      size: 35,
+                      color: Colors.grey,
+                    );
+                  },
+                  width: 35,
+                  height: 35,
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(18.0),
+                ),
+                clipBehavior: Clip.hardEdge,
+              ),
+            ),
+
           ],
           mainAxisAlignment: MainAxisAlignment.end,
         );
@@ -476,52 +579,86 @@ class ChatScreenState extends State<ChatScreen> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  // isLastMessageLeft(index)
-                  //     ? Material(
-                  //         child: Image.network(
-                  //           peerAvatar,
-                  //           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                  //             if (loadingProgress == null) return child;
-                  //             return Center(
-                  //               child: CircularProgressIndicator(
-                  //                 color: Colors.purple,
-                  //                 value: loadingProgress.expectedTotalBytes != null &&
-                  //                         loadingProgress.expectedTotalBytes != null
-                  //                     ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                  //                     : null,
-                  //               ),
-                  //             );
-                  //           },
-                  //           errorBuilder: (context, object, stackTrace) {
-                  //             return Icon(
-                  //               Icons.account_circle,
-                  //               size: 35,
-                  //               color: Colors.grey,
-                  //             );
-                  //           },
-                  //           width: 35,
-                  //           height: 35,
-                  //           fit: BoxFit.cover,
-                  //         ),
-                  //         borderRadius: BorderRadius.all(
-                  //           Radius.circular(18.0),
-                  //         ),
-                  //         clipBehavior: Clip.hardEdge,
-                  //       )
-                  //     : Container(width: 35.0),
+                /*  isLastMessageLeft(index)
+                      ? Material(
+                          child: Image.network(peerAvatar,loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: primaryColor,
+                                  value: loadingProgress.expectedTotalBytes != null &&
+                                          loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, object, stackTrace) {
+                              return Icon(
+                                Icons.account_circle,
+                                size: 35,
+                                color: Colors.grey,
+                              );
+                            },
+                            width: 35,
+                            height: 35,
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(18.0),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                        )
+                      : Container(width: 35.0),*/
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      child: Image.network(peerAvatar,loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                            value: loadingProgress.expectedTotalBytes != null &&
+                                loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
+                        );
+                      },
+                        errorBuilder: (context, object, stackTrace) {
+                          return Icon(
+                            Icons.account_circle,
+                            size: 35,
+                            color: Colors.grey,
+                          );
+                        },
+                        width: 35,
+                        height: 35,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(18.0),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                    ),
+                  ),
                   document.get('type') == 0
                       ? Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 document.get('content'),
                                 style: TextStyle(color: Colors.white),
                               ),
-                              Text(
-                                DateFormat('dd MMM kk:mm')
-                                    .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
-                                style: TextStyle(color: Colors.white, fontSize: 10.0, fontStyle: FontStyle.italic),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  DateFormat('dd MMM kk:mm')
+                                      .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.get('timestamp')))),
+                                  style: TextStyle(color: Colors.white, fontSize: 10.0, fontStyle: FontStyle.italic),
+                                ),
                               ),
 
                             ],
@@ -603,9 +740,10 @@ class ChatScreenState extends State<ChatScreen> {
                           GestureDetector(
                               onTap: () {
                                 _loadFile(document.get('content'));
+                                tempIndex = index;
                               },
                               onSecondaryTap: () {
-                                stopRecord();
+                                //stopRecord();
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -613,7 +751,7 @@ class ChatScreenState extends State<ChatScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(isPlayingMsg ? Icons.cancel : Icons.play_arrow  ,color: Colors.white,),
+                                      isPlayingMsg && tempIndex == index  ?  Icon( Icons.cancel  ,color : Colors.white) :Icon( Icons.play_arrow  ,color : Colors.white) ,
                                       Text(
                                         'Audio',
                                         maxLines: 10,style: TextStyle(
@@ -879,26 +1017,32 @@ class ChatScreenState extends State<ChatScreen> {
           isRecording ? Flexible(
             child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 8.0),
+                padding: EdgeInsets.only(left: 30),
               child: Text("Recording ...", style: TextStyle(color: primaryColor, fontSize: 18.0),)
             ),
           ) :
           Flexible(
-            child: Container(
-              child: TextField(
-                onSubmitted: (value) {
-                  onSendMessage(textEditingController.text, 0);
-                },
-                style: TextStyle(color: primaryColor, fontSize: 15.0),
-                controller: textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'typeYourMessage'.tr(),
-                  hintStyle: TextStyle(color: Colors.grey),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                child: TextField(
+                  onSubmitted: (value) {
+                    onSendMessage(textEditingController.text, 0);
+                  },
+                  style: TextStyle(color: primaryColor, fontSize: 15.0),
+                  controller: textEditingController,
+                  decoration: InputDecoration.collapsed(
+                    hintText: 'typeYourMessage'.tr(),
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  focusNode: focusNode,
                 ),
-                focusNode: focusNode,
               ),
             ),
           ),
 
+
+          isRecording ? Container() :
           // Button send message
           Material(
             child: Container(
@@ -957,6 +1101,7 @@ class ChatScreenState extends State<ChatScreen> {
             ),
     );
   }
+
   Future _loadFile(String url) async {
     final bytes = await readBytes(Uri.parse(url));
     final dir = await getApplicationDocumentsDirectory();
@@ -976,6 +1121,9 @@ class ChatScreenState extends State<ChatScreen> {
       });
     }
   }
+
+
+
   Future<void> play() async {
     if (recordFilePath != null && File(recordFilePath).existsSync()) {
       AudioPlayer audioPlayer = AudioPlayer();
@@ -984,6 +1132,8 @@ class ChatScreenState extends State<ChatScreen> {
 
     }
   }
+
+
 
   String token;
   getToken() async {

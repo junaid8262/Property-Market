@@ -1,6 +1,6 @@
 class TrendingModel{
-  String id,video,title,title_ar,details,details_ar,blog_link,date;
+  String id,video,icon,title,title_ar,details,details_ar,date;
 
-  TrendingModel(this.id, this.video, this.title, this.title_ar, this.details,
-      this.details_ar, this.blog_link, this.date);
+  TrendingModel(this.id, this.video,this.icon, this.title, this.title_ar, this.details,
+      this.details_ar, this.date);
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:propertymarket/model/news_model.dart';
 import 'package:propertymarket/values/constants.dart';
+
 class NewsDetails extends StatefulWidget {
   NewsModel news;
   bool language;
@@ -142,6 +143,8 @@ class _NewsDetailsState extends State<NewsDetails> {
             child: Text(widget.language?widget.news.details:widget.news.details_ar,),
           ),
           SizedBox(height: 10,),
+
+
           AdmobBanner(
             adUnitId: Platform.isAndroid ? androidAdmobBanner : iosAdmobBanner,
             adSize: bannerSize,

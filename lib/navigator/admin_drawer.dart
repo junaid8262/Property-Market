@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -460,6 +461,13 @@ class _AdminDrawerState extends State<AdminDrawer> {
           InkWell(
             onTap: () async {
               // SharedPref sp = SharedPref();
+
+              final FirebaseAuth _auth = FirebaseAuth.instance;
+              final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+              await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
+                "isOnline": false,
+              });
+
               await FirebaseAuth.instance.signOut().whenComplete(() {
                 //  sp.setIsLogin(false);
                 Navigator.pushReplacement(
@@ -467,6 +475,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     MaterialPageRoute(
                         builder: (BuildContext context) => Login()));
               });
+
+
             },
             child: Container(
               height: 40,

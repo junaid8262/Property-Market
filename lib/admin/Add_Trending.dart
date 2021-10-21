@@ -43,7 +43,9 @@ class _AddTrendingState extends State<AddTrending> {
   final descriptionController=TextEditingController();
   final artitle=TextEditingController();
   final title=TextEditingController();
+/*
   final blogLink=TextEditingController();
+*/
   final _formKey = GlobalKey<FormState>();
 
 
@@ -56,7 +58,7 @@ class _AddTrendingState extends State<AddTrending> {
       'details_ar': ardescriptionController.text,
       'title': title.text,
       'title_ar' : artitle.text,
-      'blog_link' : blogLink.text
+      'icon' : photoUrl,
     }).then((value) {
       Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ViewTrending()));
@@ -81,6 +83,78 @@ class _AddTrendingState extends State<AddTrending> {
     );
   }
 
+
+  File imageFiles;
+  String photoUrl="";
+  bool _progress = false ;
+
+
+  Future uploadImageToFirebase(BuildContext context) async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.show();
+    firebase_storage.Reference firebaseStorageRef = firebase_storage.FirebaseStorage.instance.ref().child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+    firebase_storage.UploadTask uploadTask = firebaseStorageRef.putFile(imagefile);
+    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
+    taskSnapshot.ref.getDownloadURL().then(
+          (value) {
+            setState(() {
+              pr.hide();
+              photoUrl=value;
+            });
+            print("value $value");
+
+          },
+    ).onError((error, stackTrace){
+      Toast.show(error.toString(), context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+    });
+  }
+  void fileSet(File file){
+    setState(() {
+      if(file!=null){
+        imagefile=file;
+      }
+    });
+    uploadImageToFirebase(context);
+  }
+  Future<File> _chooseGallery() async{
+    await ImagePicker().getImage(source: ImageSource.gallery).then((value) => fileSet(File(value.path)));
+
+  }
+  Future<File> _choosecamera() async{
+    await ImagePicker().getImage(source: ImageSource.camera).then((value) => fileSet(File(value.path)));
+
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _chooseGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _choosecamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+  }
 
 
   Future<void> _initializeVideoPlayerFuture;
@@ -136,6 +210,32 @@ class _AddTrendingState extends State<AddTrending> {
                 columnWidths: {0: FractionColumnWidth(.3), 1: FractionColumnWidth(.7)},
                 border: TableBorder.all(width: 0.5,color: Colors.grey),
                 children: [
+                  TableRow(
+                      children: [
+                        Container(
+                          child: Text('Icon',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.only(top: 5),
+                        ),
+                        photoUrl != "" ?  InkWell(
+                          onTap: (){
+                            _showPicker(context);
+                          },
+                          child: Container(
+                            height: 120,
+                            child: Image.network(photoUrl)
+                          ),
+                        ) : InkWell(
+                          onTap: (){
+                            _showPicker(context);
+                          },
+                          child: Container(
+                              height: 120,
+                              child: Image.asset("assets/images/add.png")
+                          ),
+                        ) ,
+
+                      ]),
                   TableRow(
                       children: [
                         Container(
@@ -221,37 +321,6 @@ class _AddTrendingState extends State<AddTrending> {
 
                       ]),
 
-                  TableRow(
-                      children: [
-                        Container(
-                          child: Text('Blog Link',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(top: 5),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                                maxLines: 1,
-                                controller: blogLink,
-                                decoration: InputDecoration(hintText:"Enter Title",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
-                              ),
-                            ),
-
-
-                          ],
-                        )
-
-
-                      ]),
-
-
                 ],
               ),
 
@@ -261,10 +330,16 @@ class _AddTrendingState extends State<AddTrending> {
                 child: RaisedButton(
                   onPressed: (){
                     if (_formKey.currentState.validate()) {
-                      if(videoURL!=null)
+                      if(videoURL!=null && photoUrl != "")
                         submitData();
-                      else
+
+                      else if (videoURL ==null)
                         Toast.show("Please add Video", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+
+                      else if (photoUrl == "")
+                        Toast.show("Please add Icon", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+
+
                     }
                     else{
                       Toast.show("Enter all the fields", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);

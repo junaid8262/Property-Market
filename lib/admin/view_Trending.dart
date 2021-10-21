@@ -10,6 +10,7 @@ import 'package:propertymarket/model/news_model.dart';
 import 'package:propertymarket/model/trending_model.dart';
 import 'package:propertymarket/navigator/admin_drawer.dart';
 import 'package:propertymarket/screens/news_details.dart';
+import 'package:propertymarket/screens/trending_details.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -98,13 +99,12 @@ class _ViewTrendingState extends State<ViewTrending> {
           TrendingModel trendingModel = new TrendingModel(
             individualKey,
             DATA[individualKey]['video'],
+            DATA[individualKey]['icon'],
             DATA[individualKey]['title'],
             DATA[individualKey]['title_ar'],
             DATA[individualKey]['details'],
             DATA[individualKey]['details_ar'],
-            DATA[individualKey]['blog_link'],
             DATA[individualKey]['date'],
-
           );
           list.add(trendingModel);
 
@@ -112,6 +112,7 @@ class _ViewTrendingState extends State<ViewTrending> {
       }
     });
 
+    list = list.reversed.toList();
     return list;
   }
 
@@ -191,18 +192,41 @@ class _ViewTrendingState extends State<ViewTrending> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
 
-                                          Container(
-                                              padding: EdgeInsets.all(10),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(snapshot.data[index].title,maxLines: 2,style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500
-                                                  ),),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 40,
+                                                  width: 40,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.grey,
+                                                      border: Border.all(color: Colors.grey),
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(snapshot.data[index].icon),
 
-                                                ],
-                                              )
+                                                        fit: BoxFit.contain,
+                                                      )
+                                                  ),
+                                                ),
+
+                                                Container(
+                                                    padding: EdgeInsets.all(10),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(snapshot.data[index].title,maxLines: 1,style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.w500
+                                                        ),),
+
+
+                                                      ],
+                                                    )
+                                                ),
+                                              ],
+                                            ),
                                           ),
 
 
@@ -230,10 +254,11 @@ class _ViewTrendingState extends State<ViewTrending> {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(snapshot.data[index].details,style: TextStyle(
+                                              Text(snapshot.data[index].details,maxLines: 3,style: TextStyle(
                                                 fontSize: 16,
-
-                                              ),)
+                                              ),),
+                                              SizedBox(height: 5,),
+                                              Text(timeAgoSinceDate(snapshot.data[index].date),style: TextStyle(color:Colors.black,fontSize: 10),),
                                           ]
                                       )
                                       ),
@@ -243,9 +268,9 @@ class _ViewTrendingState extends State<ViewTrending> {
 
                                       InkWell(
                                         onTap: ()async {
-                                          await canLaunch(snapshot.data[index].blog_link)
-                                              ? await launch(snapshot.data[index].blog_link)
-                                              : throw 'Could not launch $snapshot.data[index].blog_link';},
+                                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TrendingDetails(snapshot.data[index], true)));
+
+                                        },
                                         child: Container(
                                           height: 40,
                                           width: 300,

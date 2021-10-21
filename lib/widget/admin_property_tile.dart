@@ -19,8 +19,6 @@ class AdminPropertyTile extends StatefulWidget {
 class _AdminPropertyTileState extends State<AdminPropertyTile> {
 
 
-
-
   static String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
     DateTime date = DateTime.parse(dateString);
     final date2 = DateTime.now();

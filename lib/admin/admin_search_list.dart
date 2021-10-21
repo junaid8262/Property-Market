@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +22,20 @@ class AdminSearchList extends StatefulWidget {
 }
 
 
-class _AdminSearchListState extends State<AdminSearchList> {
+class _AdminSearchListState extends State<AdminSearchList> with WidgetsBindingObserver {
 
   final TextEditingController _filter = new TextEditingController();
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPref sharedPref=new SharedPref();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void setStatus(bool isOnline) async {
+    await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
+      "isOnline": isOnline,
+    });
+  }
 
   String _searchText = "";
   List<Property> names = new List();
@@ -53,8 +64,22 @@ class _AdminSearchListState extends State<AdminSearchList> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    setStatus(true);
+
     this._getNames();
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // online
+      setStatus(true);
+    } else {
+      // offline
+      setStatus(false);
+    }
   }
 
 

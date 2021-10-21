@@ -511,8 +511,7 @@ class _PropertyListState extends State<PropertyList> {
     areaFromController.text="0";
     getPropertyList();
   }
-  void handleEvent(
-      AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+  void handleEvent(AdmobAdEvent event, Map<String, dynamic> args, String adType) {
     switch (event) {
       case AdmobAdEvent.loaded:
         print('New Admob $adType Ad loaded!');
@@ -1023,6 +1022,7 @@ class _PropertyListState extends State<PropertyList> {
                               ),
                               margin: EdgeInsets.only(top: 10,right: 10,left: 10),
                             ),
+
                             isLoaded?
                             list.length>0?Container(
                               margin: EdgeInsets.all(10),
@@ -1060,7 +1060,7 @@ class _PropertyListState extends State<PropertyList> {
                                   );
                                 },
                               ),
-                            ):Container(margin: EdgeInsets.only(top: 200),child: Text('noData'.tr()),)
+                            ):Container(margin: EdgeInsets.only(top: 200),child: Center(child: Text('noData'.tr())),)
                                 :Center(child: CircularProgressIndicator(),)
 
                           ],

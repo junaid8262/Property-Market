@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,7 +19,7 @@ import 'package:propertymarket/screens/property_list.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:admob_flutter/admob_flutter.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 enum rentOrBuy { rent, buy }
@@ -26,11 +28,21 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String _message = '';
   SharedPref sharedPref=new SharedPref();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
+  void setStatus(bool isOnline) async {
+    await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
+      "isOnline": isOnline,
+    });
+  }
+
 
 
   AdmobBannerSize bannerSize;
@@ -38,8 +50,12 @@ class _HomePageState extends State<HomePage> {
   bool isAdmobLoadedForBanner=true;
   bool isAdmobLoadedForInterstitial=true;
   @override
-  void initState() {
-    // TODO: implement initState
+  Future<void> initState()  {
+
+
+    WidgetsBinding.instance.addObserver(this);
+    setStatus(true);
+
     super.initState();
 
     Admob.requestTrackingAuthorization();
@@ -57,10 +73,87 @@ class _HomePageState extends State<HomePage> {
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       print("message recieved");
       print(event.notification.body);
+
+
+      showOverlayNotification((context) {
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          child: SafeArea(
+            child: ListTile(
+              leading: SizedBox.fromSize(
+                  size: const Size(40, 40),
+                  child: ClipOval(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                            image : AssetImage("assets/images/icon.png"),
+                            fit: BoxFit.cover,
+                          ),
+                          color: Colors.black,
+
+                        ),
+                      ))),
+              title: Text(event.notification.title),
+              subtitle: Text(event.notification.body),
+              trailing: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    OverlaySupportEntry.of(context).dismiss();
+                  }),
+            ),
+          ),
+        );
+      }, duration: Duration(seconds: 4));
+
+
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!');
     });
+
+/*
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      'This channel is used for important notifications.', // description
+      importance: Importance.max,
+    );
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+     flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+
+      // If `onMessage` is triggered with a notification, construct our own
+      // local notification to show to users using the created channel.
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                icon: android?.smallIcon,
+                // other properties...
+              ),
+            ));
+
+      }
+
+
+
+    });
+*/
+
 
     SharedPref sharedPref=new SharedPref();
     sharedPref.getPref().then((value) {
@@ -74,6 +167,29 @@ class _HomePageState extends State<HomePage> {
     });
 
   }
+
+
+   notificationToast(String title)
+  {
+    final snackBar = SnackBar(content: Text(title));
+    print("title of notification is $title");
+    return ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // online
+      setStatus(true);
+    } else {
+      // offline
+      setStatus(false);
+    }
+  }
+
+
   void handleEvent(
       AdmobAdEvent event, Map<String, dynamic> args, String adType) {
     switch (event) {
