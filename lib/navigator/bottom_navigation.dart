@@ -184,10 +184,10 @@ class _BottomNavigationState extends State<BottomBar>{
   final FirebaseAuth auth = FirebaseAuth.instance;
   User _user=FirebaseAuth.instance.currentUser;
   bool areUnreadMessages=false;
+  var lang ;
   @override
   void initState() {
     super.initState();
-
 
     _children = [
       HomePage(),
@@ -196,7 +196,6 @@ class _BottomNavigationState extends State<BottomBar>{
       MyChats(),
       Notify(),
       AddProperty(),
-
 
     ];
     Admob.requestTrackingAuthorization();
@@ -213,6 +212,8 @@ class _BottomNavigationState extends State<BottomBar>{
     interstitialAd.load();
 
   }
+
+
   void handleEvent(AdmobAdEvent event, Map<String, dynamic> args, String adType) {
     switch (event) {
       case AdmobAdEvent.loaded:

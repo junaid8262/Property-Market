@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/values/constants.dart';
+import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:toast/toast.dart';
 
 
 enum rentOrBuy { rent, buy }
 class AddProperty extends StatefulWidget {
+
   @override
   _AddPropertyState createState() => _AddPropertyState();
 }
@@ -24,11 +26,39 @@ class _AddPropertyState extends State<AddProperty> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
 
+  SharedPref sp = SharedPref();
+  bool lang ;
+
   String getUserId() {
     // getting current user id
     final User user = auth.currentUser;
     return user.uid;
   }
+
+  @override
+  void initState() {
+    final User user = auth.currentUser;
+    if(user != null)
+      {
+        if(user.uid == adminId)
+          {
+            lang = true;
+            print ("language is : $lang");
+
+          }
+        else {
+          sp.getPref().then((value) {
+            lang = value;
+            print ("language is : $lang");
+
+          });
+        }
+      }
+
+    super.initState();
+
+  }
+
   rentOrBuy _rentOrBuy = rentOrBuy.rent;
   String arBuy="بيع";
   String arRent="تاجير";
