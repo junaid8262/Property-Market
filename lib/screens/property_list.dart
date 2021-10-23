@@ -1068,7 +1068,7 @@ class _PropertyListState extends State<PropertyList> {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AnimatedContainer(
-                            height: sortOpened?250:0,
+                            height: sortOpened?300:0,
                             width: MediaQuery.of(context).size.width,
                             duration: const Duration(seconds: 2),
                             curve: Curves.fastOutSlowIn,
@@ -1090,9 +1090,7 @@ class _PropertyListState extends State<PropertyList> {
                                       onTap: (){
                                         setState(() {
                                           originalSearchList.sort((a, b) => DateTime.parse(a.datePosted).millisecondsSinceEpoch.compareTo(DateTime.parse(b.datePosted).millisecondsSinceEpoch));
-
                                           list=originalSearchList.reversed.toList();
-
                                           sortOpened=false;
                                         });
 
@@ -1121,6 +1119,7 @@ class _PropertyListState extends State<PropertyList> {
 
                                     child: ListTile(
                                       onTap: (){
+                                        print("tapped");
                                         setState(() {
                                           originalSearchList.sort((a, b) => a.numericalPrice.compareTo(b.numericalPrice));
                                           list=originalSearchList.reversed.toList();
@@ -1139,7 +1138,7 @@ class _PropertyListState extends State<PropertyList> {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AnimatedContainer(
-                            height: filterOpened?MediaQuery.of(context).size.height*0.62:0,
+                            height: filterOpened?MediaQuery.of(context).size.height*0.7:0,
                             width: MediaQuery.of(context).size.width,
                             duration: const Duration(seconds: 2),
                             curve: Curves.fastOutSlowIn,

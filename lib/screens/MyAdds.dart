@@ -496,7 +496,7 @@ class _PropertyTileAdsState extends State<PropertyTileAds> {
     } else if ((difference.inDays / 30).floor() >= 2) {
       return '${(difference.inDays / 365).floor()} ${'monthsAgo'.tr()}';
     } else if ((difference.inDays / 30).floor() >= 1) {
-      return (numericDates) ? '1monthago'.tr() : 'lastMonth'.tr();
+      return (numericDates) ? '1monthAgo'.tr() : 'lastMonth'.tr();
     } else if ((difference.inDays / 7).floor() >= 2) {
       return '${(difference.inDays / 7).floor()} ${'weeksAgo'.tr()}';
     } else if ((difference.inDays / 7).floor() >= 1) {

@@ -22,6 +22,8 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import '../language_selection.dart';
+
 enum rentOrBuy { rent, buy }
 class HomePage extends StatefulWidget {
   @override
@@ -1181,7 +1183,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                     SharedPref sharedPref=new SharedPref();
                     sharedPref.setPref(false);
                     Navigator.pushReplacement(context, new MaterialPageRoute(
-                        builder: (context) => BottomBar()));
+                        builder: (context) => LanguageSelection()));
                   },
                   title: Text('arabic'.tr()),
                 ),

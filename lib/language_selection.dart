@@ -45,7 +45,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                 ListTile(
                   onTap: (){
                     context.locale = Locale('ar', 'EG');
-                    code="AR";
+                    code="العربية";
                     Navigator.pop(context);
                   },
                   title: Text('arabic'.tr()),
@@ -54,7 +54,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                   onTap: (){
                     context.locale = Locale('en', 'US');
                     setState(() {
-                      code="EN";
+                      code="English";
                     });
                     Navigator.pop(context);
                   },
