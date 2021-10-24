@@ -105,7 +105,32 @@
   "addNotification" : "Add Notification",
   "myNotification" : "My Notification",
   "notifyNote" : "Notify Me About The Newly Added Property In Specific Area",
-  "ShowDetail" : "Show more Detail"
+  "ShowDetail" : "Show more Detail",
+  "name": "Name",
+  "enterNameA": "Enter Name (Arabic)",
+  "enterNameE": "Enter Name (English)",
+  "priceA": "Price (Arabic)",
+  "priceE": "Price (English)",
+  "numberOnly": "Number Only (for sorting)",
+  "serialNo": "Serial Number",
+  "enterSerialNo": "Enter Serial Number (Any Number)",
+  "beds": "Beds",
+  "baths": "Baths",
+  "inMeter": "In meters",
+  "descriptionE": "Property Description (English)",
+  "descriptionA": "Property Description (Arabic)",
+  "phoneNo": "Phone Number",
+  "enterPhoneNo": "Enter Phone Number",
+  "agentName": "Agent Name",
+  "enterAgentNameE": "Enter Agent Name (English)",
+  "enterAgentNameA": "Enter Agent Name (Arabic)",
+  "paymentType": "Payment Type",
+  "enterPaymentTypeE": "Enter Property Type (English)",
+  "enterPaymentTypeA": "Enter Property Type (Arabic)",
+  "furnishing": "Furnishing",
+  "enterFurnishingE" : "Enter Furnish Details (English)",
+  "enterFurnishingA" : "Enter Furnish Details (Arabic)",
+  "sponsoredProperty" : "Sponsored Property"
 
 
 

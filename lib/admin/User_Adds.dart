@@ -10,7 +10,7 @@ import 'package:propertymarket/values/constants.dart';
 import 'edit_property.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 class UserAdds extends StatefulWidget {
 
   @override
@@ -47,33 +47,34 @@ class _UserAddsState extends State<UserAdds> {
     final difference = date2.difference(date);
 
     if ((difference.inDays / 365).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} years ago';
+      return '${(difference.inDays / 365).floor()} ${'yearAgo'.tr()}';
     } else if ((difference.inDays / 365).floor() >= 1) {
-      return (numericDates) ? '1 year ago' : 'Last year';
+      return (numericDates) ? '1yearAgo'.tr() : 'lastYear'.tr();
     } else if ((difference.inDays / 30).floor() >= 2) {
-      return '${(difference.inDays / 365).floor()} months ago';
+      return '${(difference.inDays / 365).floor()} ${'monthsAgo'.tr()}';
     } else if ((difference.inDays / 30).floor() >= 1) {
-      return (numericDates) ? '1 month ago' : 'Last month';
+      return (numericDates) ? '1monthAgo'.tr() : 'lastMonth'.tr();
     } else if ((difference.inDays / 7).floor() >= 2) {
-      return '${(difference.inDays / 7).floor()} weeks ago';
+      return '${(difference.inDays / 7).floor()} ${'weeksAgo'.tr()}';
     } else if ((difference.inDays / 7).floor() >= 1) {
-      return (numericDates) ? '1 week ago' : 'Last week';
+      return (numericDates) ? '1weekAgo'.tr() : 'lastWeek'.tr();
     } else if (difference.inDays >= 2) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays} ${'daysAgo'.tr()}';
     } else if (difference.inDays >= 1) {
-      return (numericDates) ? '1 day ago' : 'Yesterday';
+      return (numericDates) ? '1dayAgo'.tr() : 'yesterday'.tr();
     } else if (difference.inHours >= 2) {
-      return '${difference.inHours} hours ago';
+      return '${difference.inHours} ${'hoursAgo'.tr()}';
     } else if (difference.inHours >= 1) {
-      return (numericDates) ? '1 hour ago' : 'An hour ago';
+      return (numericDates) ? '1hourAgo'.tr() : 'anHourAgo'.tr();
     } else if (difference.inMinutes >= 2) {
-      return '${difference.inMinutes} minutes ago';
+      return '${difference.inMinutes} ${'minutesAgo'.tr()}';
     } else if (difference.inMinutes >= 1) {
-      return (numericDates) ? '1 minute ago' : 'A minute ago';
+      return (numericDates) ? '1minuteAgo'.tr() : 'aminuteAgo'.tr();
     } else if (difference.inSeconds >= 3) {
-      return '${difference.inSeconds} seconds ago';
+      return '${difference.inSeconds} ${'secondsAgo'.tr()}';
     } else {
-      return 'Just now';
+      return 'justNow'.tr();
+
     }
   }
 
@@ -358,13 +359,13 @@ class _UserAddsState extends State<UserAdds> {
                                                                 children: [
                                                                   Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 10,),
-                                                                  Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].name:snapshot.data[index].name_ar,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].location:"${snapshot.data[index].area_ar}, ${snapshot.data[index].city_ar}, ${snapshot.data[index].country_ar}",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text(context.locale.languageCode=="en"?"${'flat'.tr()} ${snapshot.data[index].propertyCategory}":"${'flat'.tr()} ${snapshot.data[index].propertyCategoryAr}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text("${'serail'.tr()} # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 7,),
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -463,13 +464,13 @@ class _UserAddsState extends State<UserAdds> {
                                                                 children: [
                                                                   Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 10,),
-                                                                  Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].name:snapshot.data[index].name_ar,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].location:"${snapshot.data[index].area_ar}, ${snapshot.data[index].city_ar}, ${snapshot.data[index].country_ar}",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text(context.locale.languageCode=="en"?"${'flat'.tr()} ${snapshot.data[index].propertyCategory}":"${'flat'.tr()} ${snapshot.data[index].propertyCategoryAr}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text("${'serail'.tr()} # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 7,),
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -568,13 +569,13 @@ class _UserAddsState extends State<UserAdds> {
                                                                 children: [
                                                                   Text(timeAgoSinceDate(snapshot.data[index].datePosted),style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 10,),
-                                                                  Text(snapshot.data[index].name,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].name:snapshot.data[index].name_ar,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text(snapshot.data[index].location,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
+                                                                  Text(context.locale.languageCode=="en"?snapshot.data[index].location:"${snapshot.data[index].area_ar}, ${snapshot.data[index].city_ar}, ${snapshot.data[index].country_ar}",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15,color: Colors.black),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Flat for ${snapshot.data[index].propertyCategory}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text(context.locale.languageCode=="en"?"${'flat'.tr()} ${snapshot.data[index].propertyCategory}":"${'flat'.tr()} ${snapshot.data[index].propertyCategoryAr}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 5,),
-                                                                  Text("Serial Number # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
+                                                                  Text("${'serail'.tr()} # ${snapshot.data[index].serial}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300),),
                                                                   SizedBox(height: 7,),
                                                                   Row(
                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

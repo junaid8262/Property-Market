@@ -31,6 +31,41 @@ class Chat extends StatelessWidget {
   final String peerId ,name;
 
   Chat({Key key,  this.peerId,this.name }) : super(key: key);
+  static String timeAgoSinceDate(var dateString, {bool numericDates = true}) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(dateString);
+    final date2 = DateTime.now();
+    final difference = date2.difference(date);
+
+    if ((difference.inDays / 365).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} ${'yearAgo'.tr()}';
+    } else if ((difference.inDays / 365).floor() >= 1) {
+      return (numericDates) ? '1yearAgo'.tr() : 'lastYear'.tr();
+    } else if ((difference.inDays / 30).floor() >= 2) {
+      return '${(difference.inDays / 365).floor()} ${'monthsAgo'.tr()}';
+    } else if ((difference.inDays / 30).floor() >= 1) {
+      return (numericDates) ? '1monthAgo'.tr() : 'lastMonth'.tr();
+    } else if ((difference.inDays / 7).floor() >= 2) {
+      return '${(difference.inDays / 7).floor()} ${'weeksAgo'.tr()}';
+    } else if ((difference.inDays / 7).floor() >= 1) {
+      return (numericDates) ? '1weekAgo'.tr() : 'lastWeek'.tr();
+    } else if (difference.inDays >= 2) {
+      return '${difference.inDays} ${'daysAgo'.tr()}';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1dayAgo'.tr() : 'yesterday'.tr();
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} ${'hoursAgo'.tr()}';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1hourAgo'.tr() : 'anHourAgo'.tr();
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} ${'minutesAgo'.tr()}';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1minuteAgo'.tr() : 'aminuteAgo'.tr();
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} ${'secondsAgo'.tr()}';
+    } else {
+      return 'justNow'.tr();
+    }
+  }
 
 
   @override
@@ -49,27 +84,36 @@ class Chat extends StatelessWidget {
               stream:  FirebaseFirestore.instance.collection('user status').doc(peerId).snapshots() ,
               builder: ( BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshots){
 
-                if(snapshots.data != null ){
-                  if(snapshots.data['isOnline'])
-                    {
-
-
-                      return Text("online",style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),);
-                    }
-                  else
-                    {
-                      return Text("offline",style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),);
-                    }
-                }
-                else {
+                if (!snapshots.hasData)
+                  {
                     return Container();
-                }
+                  }
+
+                if (snapshots.data.exists)
+                  {
+                    if(snapshots.data != null ){
+                      if(snapshots.data['isOnline'])
+                      {
+
+
+                        return Text("online",style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),);
+                      }
+                      else if (snapshots.data['isOnline'] == false)
+                      {
+                        return Text("Last Seen : ${timeAgoSinceDate(snapshots.data['lastSeen'])}",style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),);
+                      }
+                    }
+                  }
+
+
+                    return Container();
+
 
               },
             ),

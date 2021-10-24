@@ -466,6 +466,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
               final FirebaseFirestore _firestore = FirebaseFirestore.instance;
               await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
                 "isOnline": false,
+                "lastSeen" : DateTime.now().millisecondsSinceEpoch,
               });
 
               await FirebaseAuth.instance.signOut().whenComplete(() {

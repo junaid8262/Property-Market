@@ -12,6 +12,7 @@ import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:toast/toast.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 enum rentOrBuy { rent, buy }
@@ -40,19 +41,11 @@ class _AddPropertyState extends State<AddProperty> {
     final User user = auth.currentUser;
     if(user != null)
       {
-        if(user.uid == adminId)
-          {
-            lang = true;
-            print ("language is : $lang");
+        sp.getPref().then((value) {
+          lang = value;
+          print ("language is : $lang");
 
-          }
-        else {
-          sp.getPref().then((value) {
-            lang = value;
-            print ("language is : $lang");
-
-          });
-        }
+        });
       }
 
     super.initState();
@@ -827,7 +820,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Name',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('name'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -843,7 +836,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               maxLines: 1,
                               controller: arwordPriceController,
-                              decoration: InputDecoration(hintText:"Enter Name (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterNameA'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -857,7 +850,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               maxLines: 1,
                               controller: wordPriceController,
-                              decoration: InputDecoration(hintText:"Enter Name (English)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterNameE'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -869,7 +862,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Price',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('price'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -886,7 +879,7 @@ class _AddPropertyState extends State<AddProperty> {
                               controller:enpriceController,
                               keyboardType: TextInputType.number,
                               maxLines: 1,
-                              decoration: InputDecoration(hintText:"Price (English)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'priceE'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -901,7 +894,7 @@ class _AddPropertyState extends State<AddProperty> {
                               controller:arpriceController,
                               keyboardType: TextInputType.number,
                               maxLines: 1,
-                              decoration: InputDecoration(hintText:"Price (Arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'priceA'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -916,7 +909,7 @@ class _AddPropertyState extends State<AddProperty> {
                               controller:numpriceController,
                               keyboardType: TextInputType.number,
                               maxLines: 1,
-                              decoration: InputDecoration(hintText:"Number only (for sorting)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'numberOnly'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                         ],
@@ -927,7 +920,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Serial Number',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('serialNo'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -942,14 +935,14 @@ class _AddPropertyState extends State<AddProperty> {
                           },
                           controller:snoController,
                           maxLines: 1,
-                          decoration: InputDecoration(hintText:"Enter Serial No (Any Number)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:'enterSerialNo'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Beds',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('beds'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -972,7 +965,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Baths',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('baths'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -995,7 +988,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Area',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('area'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1010,7 +1003,7 @@ class _AddPropertyState extends State<AddProperty> {
                           },
                           controller: areaSqrftController,
                           keyboardType: TextInputType.number,
-                          decoration: InputDecoration(hintText:"In meters",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:'inMeter'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
 
@@ -1018,7 +1011,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Floors',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('floor'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1042,7 +1035,7 @@ class _AddPropertyState extends State<AddProperty> {
                     children: [
                       Container(
 
-                        child: Text('Description',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('description'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1058,7 +1051,7 @@ class _AddPropertyState extends State<AddProperty> {
                                 return null;
                               },
                               controller: descriptionController,
-                              decoration: InputDecoration(hintText:"Property Description (English)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'descriptionE'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -1072,7 +1065,7 @@ class _AddPropertyState extends State<AddProperty> {
                                 return null;
                               },
                               controller: ardescriptionController,
-                              decoration: InputDecoration(hintText:"Property Description (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'descriptionA'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -1084,7 +1077,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Phone Number',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('phoneNo'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1100,14 +1093,14 @@ class _AddPropertyState extends State<AddProperty> {
                           },
                           controller: phoneController,
                           keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(hintText:"Enter Phone Number",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:"enterPhoneNo".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Email',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('email'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1121,14 +1114,14 @@ class _AddPropertyState extends State<AddProperty> {
                             return null;
                           },
                           controller: emailController,
-                          decoration: InputDecoration(hintText:"Enter Email",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:"enterEmail".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Agent Name',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('agentName'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1145,7 +1138,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: agentNameController,
 
-                              decoration: InputDecoration(hintText:"Enter Agent Name",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:"enterAgentNameE".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -1160,7 +1153,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: aragentNameController,
 
-                              decoration: InputDecoration(hintText:"Enter Agent Name (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:"enterAgentNameA".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -1171,7 +1164,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Country',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('country'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1189,14 +1182,14 @@ class _AddPropertyState extends State<AddProperty> {
                           onTap: (){
                             _showCountryDailog();
                           },
-                          decoration: InputDecoration(hintText:"Enter Country",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:"selectCountry".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('City',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('city'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1214,14 +1207,14 @@ class _AddPropertyState extends State<AddProperty> {
                           onTap: (){
                             _showCityDailog();
                           },
-                          decoration: InputDecoration(hintText:"Enter City",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:"selectCity".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Area',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('area'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1239,14 +1232,14 @@ class _AddPropertyState extends State<AddProperty> {
                           onTap: (){
                             _showAreaDailog();
                           },
-                          decoration: InputDecoration(hintText:"Enter Area",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:'selectArea'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Property Type',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('propertyType'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1264,14 +1257,14 @@ class _AddPropertyState extends State<AddProperty> {
                           onTap: (){
                             _showTypeDailog();
                           },
-                          decoration: InputDecoration(hintText:"Enter Property Type",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                          decoration: InputDecoration(hintText:'selectType'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
                       ),
                     ]),
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Payment Type',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('paymentType'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1288,7 +1281,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: paymentController,
 
-                              decoration: InputDecoration(hintText:"Enter Payment Type",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterPaymentTypeE'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -1303,7 +1296,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: arpaymentController,
 
-                              decoration: InputDecoration(hintText:"Enter Payment Type (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterPaymentTypeA'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -1314,7 +1307,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('Furnishing',textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('furnishing'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1331,7 +1324,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: furnishController,
 
-                              decoration: InputDecoration(hintText:"Enter Furnish details",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterFurnishingE'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
                           Divider(color: Colors.grey[600],),
@@ -1346,7 +1339,7 @@ class _AddPropertyState extends State<AddProperty> {
                               },
                               controller: arfurnishController,
 
-                              decoration: InputDecoration(hintText:"Enter Furnish details (arabic)",contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
+                              decoration: InputDecoration(hintText:'enterFurnishingA'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                             ),
                           ),
 
@@ -1364,7 +1357,7 @@ class _AddPropertyState extends State<AddProperty> {
             ),
 
             CheckboxListTile(
-                title: Text("Sponsered Property"),
+                title: Text("sponsoredProperty".tr()),
                 value: isSponsered,
                 activeColor: primaryColor,
                 onChanged: (bool value){
@@ -1389,7 +1382,7 @@ class _AddPropertyState extends State<AddProperty> {
                   },
                 ),
                 new Text(
-                  'Rent',
+                  'rent'.tr(),
                   style: new TextStyle(fontSize: 16.0),
                 ),
                 new Radio(
@@ -1403,7 +1396,7 @@ class _AddPropertyState extends State<AddProperty> {
                   },
                 ),
                 new Text(
-                  'Buy',
+                  'buy'.tr(),
                   style: new TextStyle(
                     fontSize: 16.0,
                   ),
@@ -1443,7 +1436,7 @@ class _AddPropertyState extends State<AddProperty> {
 
                 },
                 color: primaryColor,
-                child: Text("Add Property",style: TextStyle(color: Colors.white),),
+                child: Text("addProperty".tr(),style: TextStyle(color: Colors.white),),
               ),
             )
           ],

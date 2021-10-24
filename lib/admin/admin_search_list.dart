@@ -34,6 +34,7 @@ class _AdminSearchListState extends State<AdminSearchList> with WidgetsBindingOb
   void setStatus(bool isOnline) async {
     await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
       "isOnline": isOnline,
+      "lastSeen" : DateTime.now().millisecondsSinceEpoch,
     });
   }
 

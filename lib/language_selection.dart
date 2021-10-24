@@ -14,7 +14,7 @@ class LanguageSelection extends StatefulWidget {
 }
 
 class _LanguageSelectionState extends State<LanguageSelection> {
-  String code="EN";
+  String code="العربية";
 
   Future<void> _showChangeLanguageDailog() async {
     return showDialog<void>(
@@ -72,6 +72,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Container(
         width: double.maxFinite,

@@ -1068,7 +1068,7 @@ class _PropertyListState extends State<PropertyList> {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AnimatedContainer(
-                            height: sortOpened?300:0,
+                            height: sortOpened?350:0,
                             width: MediaQuery.of(context).size.width,
                             duration: const Duration(seconds: 2),
                             curve: Curves.fastOutSlowIn,
@@ -1138,7 +1138,7 @@ class _PropertyListState extends State<PropertyList> {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AnimatedContainer(
-                            height: filterOpened?MediaQuery.of(context).size.height*0.7:0,
+                            height: filterOpened?MediaQuery.of(context).size.height*0.72:0,
                             width: MediaQuery.of(context).size.width,
                             duration: const Duration(seconds: 2),
                             curve: Curves.fastOutSlowIn,

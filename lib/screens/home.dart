@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
   void setStatus(bool isOnline) async {
     await _firestore.collection('user status').doc(_auth.currentUser.uid).set({
       "isOnline": isOnline,
+      "lastSeen" : DateTime.now().millisecondsSinceEpoch,
     });
   }
 
@@ -1183,7 +1184,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                     SharedPref sharedPref=new SharedPref();
                     sharedPref.setPref(false);
                     Navigator.pushReplacement(context, new MaterialPageRoute(
-                        builder: (context) => LanguageSelection()));
+                        builder: (context) => BottomBar()));
                   },
                   title: Text('arabic'.tr()),
                 ),
