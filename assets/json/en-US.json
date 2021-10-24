@@ -130,8 +130,7 @@
   "furnishing": "Furnishing",
   "enterFurnishingE" : "Enter Furnish Details (English)",
   "enterFurnishingA" : "Enter Furnish Details (Arabic)",
-  "sponsoredProperty" : "Sponsored Property"
-
-
+  "sponsoredProperty" : "Sponsored Property",
+  "lastSeen" : "Last Seen"
 
 }

@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:lottie/lottie.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:propertymarket/admin/add_property.dart';
-import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/model/slideshow.dart';
 import 'package:propertymarket/navigator/bottom_navigation.dart';
@@ -19,7 +17,6 @@ import 'package:propertymarket/screens/property_list.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../language_selection.dart';

@@ -230,7 +230,7 @@ class MenuDrawerState extends State<MenuDrawer> {
               else {
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) =>
-                        Chat(peerId: adminId, name: "Admin",)));
+                        Chat(peerId: adminId, name: 'Property Market',)));
               }
             },
             child: Container(

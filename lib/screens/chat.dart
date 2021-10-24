@@ -103,7 +103,7 @@ class Chat extends StatelessWidget {
                       }
                       else if (snapshots.data['isOnline'] == false)
                       {
-                        return Text("Last Seen : ${timeAgoSinceDate(snapshots.data['lastSeen'])}",style: TextStyle(
+                        return Text("lastSeen".tr() + " : ${timeAgoSinceDate(snapshots.data['lastSeen'])}",style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                         ),);

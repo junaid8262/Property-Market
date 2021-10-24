@@ -127,8 +127,9 @@
   "paymentType": "نوع الدفع",
   "enterPaymentTypeE": "أدخل نوع الدفع (إنجليزي)",
   "enterPaymentTypeA": "أدخل نوع الدفع (عربي)",
-  "furnishing": "تأثيث",
+  "furnishing": "مفروش",
   "enterFurnishingE" : "أدخل تفاصيل التأثيث (الإنجليزية)",
   "enterFurnishingA" : "أدخل تفاصيل التأثيث (عربي)",
-  "sponsoredProperty" : "الملكية برعاية"
+  "sponsoredProperty" : "الملكية برعاية",
+  "lastSeen"  :  "اخر ظهور"
 }
