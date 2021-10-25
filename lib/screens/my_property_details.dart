@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/model/property.dart';
+import 'package:propertymarket/screens/ImagePreview.dart';
 import 'package:propertymarket/screens/MyAdds.dart';
+import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-
+var indexImageMyProperty = 0 ;
 class MyPropertyDetail extends StatefulWidget {
   Property _property;
   bool lang;
@@ -227,34 +229,45 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
               children: [
                 Container(
                   height: 250,
-                  child: ImageSlideshow(
-
-                    /// Width of the [ImageSlideshow].
-                    width: double.infinity,
-
-
-                    /// The page to show when first creating the [ImageSlideshow].
-                    initialPage: 0,
-
-                    /// The color to paint the indicator.
-                    indicatorColor: Colors.blue,
-
-                    /// The color to paint behind th indicator.
-                    indicatorBackgroundColor: Colors.white,
-
-
-                    /// The widgets to display in the [ImageSlideshow].
-                    /// Add the sample image file into the images folder
-                    children: slideShowWidget,
-
-                    /// Called whenever the page in the center of the viewport changes.
-                    onPageChanged: (value) {
-                      print('Page changed: $value');
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) {
+                            return ImagePreview(widget._property.image,indexImageMyProperty);
+                          }));
                     },
+                    child: ImageSlideshow(
 
-                    /// Auto scroll interval.
-                    /// Do not auto scroll with null or 0.
-                    autoPlayInterval: 10000,
+                      /// Width of the [ImageSlideshow].
+                      width: double.infinity,
+
+
+                      /// The page to show when first creating the [ImageSlideshow].
+                      initialPage: 0,
+
+                      /// The color to paint the indicator.
+                      indicatorColor: Colors.blue,
+
+                      /// The color to paint behind th indicator.
+                      indicatorBackgroundColor: Colors.white,
+
+
+                      /// The widgets to display in the [ImageSlideshow].
+                      /// Add the sample image file into the images folder
+                      children: slideShowWidget,
+
+                      /// Called whenever the page in the center of the viewport changes.
+                      onPageChanged: (value) {
+                        setState(() {
+                          indexImageMyProperty = value;
+                        });
+                        print('Page changed: $value');
+                      },
+
+                      /// Auto scroll interval.
+                      /// Do not auto scroll with null or 0.
+                      autoPlayInterval: 10000,
+                    ),
                   ),
                 ),
 
