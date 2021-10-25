@@ -9,6 +9,7 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/auth/login.dart';
 import 'package:propertymarket/model/property.dart';
+import 'package:propertymarket/screens/ImagePreview.dart';
 import 'package:propertymarket/screens/chat.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -263,14 +264,10 @@ class _PropertyDetailState extends State<PropertyDetail> {
                     onTap: (){
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) {
-                            return FullScreenImage(
-                              imageUrl: widget._property.image[indexImage],
-                              tag: "generate_a_unique_tag1",
-                            );
+                            return ImagePreview(widget._property.image,indexImage);
                           }));
                     },
-                    child: Hero(
-                     child: ImageSlideshow(
+                    child:  ImageSlideshow(
                       /// Width of the [ImageSlideshow].
                       width: double.infinity,
 
@@ -302,8 +299,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                       autoPlayInterval: 1000000,
                     ),
 
-                      tag: "generate_a_unique_tag1",
-                    ),
+
                   ),
 
                 ),
