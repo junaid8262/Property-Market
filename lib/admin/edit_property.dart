@@ -1457,7 +1457,8 @@ class _EditPropertyState extends State<EditProperty> {
         <String, dynamic>{
           'notification': <String, dynamic>{
             'body': 'New property added in ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}',
-            'title': 'New Property Added'
+            'title': 'New Property Added',
+            "sound" : "default"
           },
           'priority': 'high',
           'data': <String, dynamic>{
@@ -1485,7 +1486,8 @@ class _EditPropertyState extends State<EditProperty> {
           <String, dynamic>{
             'notification': <String, dynamic>{
               'body':  'Property You Added Is live for Million Of Users' ,
-              'title': 'Your Property Is Added'
+              'title': 'Your Property Is Added',
+              "sound" : "default"
             },
             'priority': 'high',
             'data': <String, dynamic>{
@@ -1540,7 +1542,8 @@ class _EditPropertyState extends State<EditProperty> {
         <String, dynamic>{
           'notification': <String, dynamic>{
             'body': 'The Property Type You Have Asked For Is Added',
-            'title': 'Your Wish list Property Is Added'
+            'title': 'Your Wish list Property Is Added',
+            "sound" : "default"
           },
           'priority': 'high',
           'data': <String, dynamic>{

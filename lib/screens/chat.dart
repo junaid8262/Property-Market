@@ -413,7 +413,8 @@ class ChatScreenState extends State<ChatScreen> {
         <String, dynamic>{
           'notification': <String, dynamic>{
             'body': 'You Have Recived A Message From $senderName',
-            'title': 'A New Message'
+            'title': 'A New Message',
+            "sound" : "default"
           },
           'priority': 'high',
           'data': <String, dynamic>{
