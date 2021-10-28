@@ -29,21 +29,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // FacebookAudienceNetwork.init(
-    //     testingId: "97294348-249f-4530-b841-55eed93b02f0"
-    // );
-    //_controller = VideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
     _controller = VideoPlayerController.asset("assets/video/splash.mp4");
     _initializeVideoPlayerFuture = _controller.initialize();
     _loadWidget();
-    //_controller.setLooping(true);
     getCurrentUser();
   }
   _loadWidget() async {
     var _duration = Duration(seconds: splashDelay);
     return Timer(_duration, navigationPage);
   }
-  void navigationPage() {
+  void navigationPage() async{
     _controller.pause();
     SharedPref sharedPref=SharedPref();
     sharedPref.getFirstTimePref().then((value) => {

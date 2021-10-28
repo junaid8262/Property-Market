@@ -257,17 +257,9 @@ class _BottomNavigationState extends State<BottomBar>{
 
   void onTabTapped(int index) async{
     if(index==0){
-      if (await interstitialAd.isLoaded) {
-        interstitialAd.show();
-        setState(() {
-          _currentIndex = index;
-        });
-      }
-      else {
-        setState(() {
-          _currentIndex = index;
-        });
-      }
+      setState(() {
+        _currentIndex = index;
+      });
 
     }
     if(index==1){
@@ -285,17 +277,9 @@ class _BottomNavigationState extends State<BottomBar>{
       }
     }
     else if(index==2){
-      if (await interstitialAd.isLoaded) {
-        interstitialAd.show();
-        setState(() {
-          _currentIndex = index;
-        });
-      }
-      else {
-        setState(() {
-          _currentIndex = index;
-        });
-      }
+      setState(() {
+        _currentIndex = index;
+      });
     }
     else if(index==3){
       User user=FirebaseAuth.instance.currentUser;

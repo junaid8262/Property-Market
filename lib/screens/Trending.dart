@@ -291,13 +291,14 @@ class _TrendingState extends State<Trending> {
 
                                                     InkWell(
                                                       onTap: ()async {
+                                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TrendingDetails(snapshot.data[index], prefshot.data)));                                          print('Interstitial ad is still loading...');
 
-                                                        if (await interstitialAd.isLoaded) {
+                                                        /*if (await interstitialAd.isLoaded) {
                                                           interstitialAd.show();
                                                           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TrendingDetails(snapshot.data[index], prefshot.data)));                                        }
                                                         else {
                                                           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TrendingDetails(snapshot.data[index], prefshot.data)));                                          print('Interstitial ad is still loading...');
-                                                        }
+                                                        }*/
                                                       },
                                                       child: Center(
                                                         child: Container(
