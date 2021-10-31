@@ -47,7 +47,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
   }
 
   IconData _iconData=Icons.favorite_border;
-  Color _color=Colors.white;
+  Color _color=Colors.black54;
   bool isFavourite = false;
   List<Widget> slideShowWidget=[];
 
@@ -179,7 +179,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
       databaseReference.child("favourites").child(user.uid).child(widget._property.id).remove().then((value) {
         setState(() {
           _iconData=Icons.favorite_border;
-          _color=Colors.white;
+          _color=Colors.black54;
           isFavourite=false;
           pr.hide();
         });

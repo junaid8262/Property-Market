@@ -9,7 +9,6 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:propertymarket/model/property.dart';
 import 'package:propertymarket/screens/ImagePreview.dart';
 import 'package:propertymarket/screens/MyAdds.dart';
-import 'package:propertymarket/screens/property_detail.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 

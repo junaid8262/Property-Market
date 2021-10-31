@@ -1381,7 +1381,7 @@ class _EditPropertyState extends State<EditProperty> {
                       {
                         status = "approved";
                         submitData();
-                        sendNotification();
+                        //sendNotification();
                         approvedNotification();
                         getNotificationUser();
 

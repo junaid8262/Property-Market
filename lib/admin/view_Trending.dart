@@ -192,51 +192,56 @@ class _ViewTrendingState extends State<ViewTrending> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
 
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.grey,
-                                                      border: Border.all(color: Colors.grey),
-                                                      image: DecorationImage(
-                                                        image: NetworkImage(snapshot.data[index].icon),
+                                          Expanded(
+                                            flex: 9 ,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    height: 40,
+                                                    width: 40,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Colors.grey,
+                                                        border: Border.all(color: Colors.grey),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(snapshot.data[index].icon),
 
-                                                        fit: BoxFit.contain,
+                                                          fit: BoxFit.contain,
+                                                        )
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                      padding: EdgeInsets.all(10),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(snapshot.data[index].title,maxLines: 1,style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight: FontWeight.w500
+                                                          ),),
+
+
+                                                        ],
                                                       )
                                                   ),
-                                                ),
-
-                                                Container(
-                                                    padding: EdgeInsets.all(10),
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(snapshot.data[index].title,maxLines: 1,style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.w500
-                                                        ),),
-
-
-                                                      ],
-                                                    )
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
 
 
-
-                                          IconButton(
-                                            icon: Icon(Icons.delete_forever_outlined),
-                                            color: Colors.redAccent,
-                                            onPressed: (){
-                                              deleteItem(snapshot.data[index].id);
-                                            },
+                                          Expanded(
+                                            flex : 1,
+                                            child: IconButton(
+                                              icon: Icon(Icons.delete_forever_outlined),
+                                              color: Colors.redAccent,
+                                              onPressed: (){
+                                                deleteItem(snapshot.data[index].id);
+                                              },
+                                            ),
                                           ),
                                         ],
                                       ),

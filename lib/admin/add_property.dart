@@ -35,7 +35,8 @@ class _AddPropertyState extends State<AddProperty> {
     final User user = auth.currentUser;
     return user.uid;
   }
-
+  AdmobBannerSize bannerSize;
+  AdmobInterstitial interstitialAd;
   @override
   void initState() {
     final User user = auth.currentUser;
@@ -47,11 +48,62 @@ class _AddPropertyState extends State<AddProperty> {
 
         });
       }
+    Admob.requestTrackingAuthorization();
+    bannerSize = AdmobBannerSize.BANNER;
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: Platform.isAndroid ? androidInterstitialVideo : iosAdmobInterstitialVideo,
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        handleEvent(event, args, 'Interstitial');
+      },
+    );
+
+    interstitialAd.load();
 
     super.initState();
 
   }
-
+  void handleEvent(AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+    switch (event) {
+      case AdmobAdEvent.loaded:
+        print('New Admob $adType Ad loaded!');
+        break;
+      case AdmobAdEvent.opened:
+        print('Admob $adType Ad opened!');
+        break;
+      case AdmobAdEvent.closed:
+        print('Admob $adType Ad closed!');
+        break;
+      case AdmobAdEvent.failedToLoad:
+        print('Admob $adType Ad failed!');
+        break;
+      case AdmobAdEvent.rewarded:
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return WillPopScope(
+              child: AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Reward callback fired. Thanks Andrew!'),
+                    Text('Type: ${args['type']}'),
+                    Text('Amount: ${args['amount']}'),
+                  ],
+                ),
+              ),
+              onWillPop: () async {
+                print("snack bar popped");
+                return true;
+              },
+            );
+          },
+        );
+        break;
+      default:
+    }
+  }
   rentOrBuy _rentOrBuy = rentOrBuy.rent;
   String arBuy="بيع";
   String arRent="تاجير";
@@ -585,16 +637,23 @@ class _AddPropertyState extends State<AddProperty> {
       'area_ar': selectedAreaAR,
       'typeOfProperty_ar': selectedTypeAR,
 
-    }).then((value) {
+    }).then((value) async {
       if(getUserId() == adminId)
         {
-          sendNotification();
+          //sendNotification();
           Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AddProperty()));
         }
       else
         {
-          Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+
+          if (await interstitialAd.isLoaded) {
+            interstitialAd.show();
+            Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+          }
+          else {
+            Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+          }
         }
 
 
