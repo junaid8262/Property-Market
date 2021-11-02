@@ -124,12 +124,13 @@
   "agentName": "اسم العميل",
   "enterAgentNameE": "أدخل اسم الوكيل (انجليزي)",
   "enterAgentNameA": "أدخل اسم الوكيل (عربي)",
-  "paymentType": "نوع الدفع",
+  "paymentType": "طريقة الدفع",
   "enterPaymentTypeE": "أدخل نوع الدفع (إنجليزي)",
   "enterPaymentTypeA": "أدخل نوع الدفع (عربي)",
   "furnishing": "مفروش",
   "enterFurnishingE" : "أدخل تفاصيل التأثيث (الإنجليزية)",
   "enterFurnishingA" : "أدخل تفاصيل التأثيث (عربي)",
   "sponsoredProperty" : "الملكية برعاية",
-  "lastSeen"  :  "اخر ظهور"
+  "lastSeen"  :  "اخر ظهور",
+  "areaAdd": "المنطقة"
 }

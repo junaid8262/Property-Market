@@ -246,18 +246,14 @@ class _TrendingState extends State<Trending> {
                                                                 )
                                                             ),
                                                           ),
-                                                          Container(
-                                                              padding: EdgeInsets.all(10),
-                                                              child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Text(prefshot.data?snapshot.data[index].title:snapshot.data[index].title_ar,maxLines: 1,style: TextStyle(
-                                                                      fontSize: 18,
-                                                                      fontWeight: FontWeight.w500
-                                                                  ),),
-
-                                                                ],
-                                                              )
+                                                          Expanded(
+                                                            child: Container(
+                                                                padding: EdgeInsets.all(10),
+                                                                child: Text(prefshot.data?snapshot.data[index].title:snapshot.data[index].title_ar,style: TextStyle(
+                                                                    fontSize: 18,
+                                                                    fontWeight: FontWeight.w500
+                                                                ),),
+                                                            ),
                                                           ),
 
                                                         ],

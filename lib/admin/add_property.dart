@@ -8,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
@@ -109,6 +110,8 @@ class _AddPropertyState extends State<AddProperty> {
   String arRent="تاجير";
   String status,addPublisherId;
   bool isRent=true ;
+  final _scrollController = ScrollController();
+
   final enpriceController=TextEditingController();
   final arpriceController=TextEditingController();
   final numpriceController=TextEditingController();
@@ -152,6 +155,21 @@ class _AddPropertyState extends State<AddProperty> {
 
 
 
+  String engCountry = "";
+  String engCity = "";
+  String engArea = "";
+  String engType="";
+
+  String arCountry = "";
+  String arCity = "";
+  String arArea = "";
+  String arType="";
+
+
+  String selectedCountryName = 'selectCountry'.tr();
+  String selectedCityName = 'selectCity'.tr();
+  String selectedAreaName = 'selectArea'.tr();
+  String selectedTypeName='selectType'.tr();
 
 
   Future<List<LocationModel>> getCountryList() async {
@@ -251,7 +269,7 @@ class _AddPropertyState extends State<AddProperty> {
     return list;
   }
 
-  Future<void> _showCountryDailog() async {
+  Future<void> _showCountryDailog(bool val) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -265,65 +283,130 @@ class _AddPropertyState extends State<AddProperty> {
           insetAnimationDuration: const Duration(seconds: 1),
           insetAnimationCurve: Curves.fastOutSlowIn,
           elevation: 2,
-
           child: Container(
-            height: MediaQuery.of(context).size.height*0.4,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30)
-            ),
+            height: MediaQuery.of(context).size.height * 0.4,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: Text("Countries",textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: Text(
+                          'country'.tr(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Expanded(child: FutureBuilder<List<LocationModel>>(
-                  future: getCountryList(),
-                  builder: (context,snapshot){
-                    if (snapshot.hasData) {
-                      if (snapshot.data != null && snapshot.data.length>0) {
-                        return Container(
-                          margin: EdgeInsets.all(10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context,int index){
-                              return GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    countryController.text=snapshot.data[index].name;
-                                    selectedCountryAR=snapshot.data[index].name_ar;
-                                    selectedCountryId=snapshot.data[index].id;
-                                  });
-                                  Navigator.pop(context);
+                Expanded(
+                  child: FutureBuilder<List<LocationModel>>(
+                    future: getCountryList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data != null && snapshot.data.length > 0) {
+                          return Container(
+                            margin: EdgeInsets.all(10),
+                            child: Scrollbar(
+                              controller: _scrollController,
+                              isAlwaysShown:
+                              snapshot.data.length > 3 ? true : false,
+                              child: ListView.separated(
+                                controller: _scrollController,
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                    color: Colors.grey,
+                                  );
                                 },
-                                child: Container(
-                                  margin: EdgeInsets.all(5),
-                                  child: Text(snapshot.data[index].name,textAlign: TextAlign.center,style: TextStyle(fontSize: 16,color:Colors.black),),
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        !val
+                                            ? selectedCountryName =snapshot.data[index].name_ar
+                                            : selectedCountryName =snapshot.data[index].name;
+
+                                        engCountry = snapshot.data[index].name;
+                                        arCountry = snapshot.data[index].name_ar;
+                                        selectedCountryId =
+                                            snapshot.data[index].id;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      child: Text(
+                                        !val
+                                            ? snapshot.data[index].name_ar
+                                            : snapshot.data[index].name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Lottie.asset(
+                                  'assets/json/empty.json',
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.4,
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.2,
+                                  fit: BoxFit.fill,
                                 ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                      else {
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                  child: Text(
+                                    'noData'.tr(),
+                                    style: TextStyle(fontSize: 16),
+                                  )),
+                            ],
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text('Error : ${snapshot.error}');
+                      } else {
                         return new Center(
-                          child: Container(
-                              child: Text("No data found")
-                          ),
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
-                    else if (snapshot.hasError) {
-                      return Text('Error : ${snapshot.error}');
-                    } else {
-                      return new Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                )),
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 )
@@ -334,7 +417,8 @@ class _AddPropertyState extends State<AddProperty> {
       },
     );
   }
-  Future<void> _showCityDailog() async {
+
+  Future<void> _showCityDailog(bool val) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -348,72 +432,131 @@ class _AddPropertyState extends State<AddProperty> {
           insetAnimationDuration: const Duration(seconds: 1),
           insetAnimationCurve: Curves.fastOutSlowIn,
           elevation: 2,
-
           child: Container(
-            height: MediaQuery.of(context).size.height*0.4,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30)
-            ),
+            height: MediaQuery.of(context).size.height * 0.4,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: Text("City", textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: Text(
+                          'city'.tr(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Expanded(child: FutureBuilder<List<LocationModel>>(
-                  future: getCityList(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data != null && snapshot.data.length > 0) {
-                        return Container(
-                          margin: EdgeInsets.all(10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    cityController.text =
-                                        snapshot.data[index].name;
-                                    selectedCityAR =snapshot.data[index].name_ar;
-                                    selectedCityId = snapshot.data[index].id;
-                                  });
-                                  Navigator.pop(context);
+                Expanded(
+                  child: FutureBuilder<List<LocationModel>>(
+                    future: getCityList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data != null && snapshot.data.length > 0) {
+                          return Container(
+                            margin: EdgeInsets.all(10),
+                            child: Scrollbar(
+                              controller: _scrollController,
+                              isAlwaysShown:
+                              snapshot.data.length > 3 ? true : false,
+                              child: ListView.separated(
+                                controller: _scrollController,
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                    color: Colors.grey,
+                                  );
                                 },
-                                child: Container(
-                                  margin: EdgeInsets.all(5),
-                                  child: Text(snapshot.data[index].name,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),),
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        !val
+                                            ? selectedCityName =
+                                            snapshot.data[index].name_ar
+                                            : selectedCityName =
+                                            snapshot.data[index].name;
+                                        engCity = snapshot.data[index].name;
+                                        arCity = snapshot.data[index].name_ar;
+                                        selectedCityId =
+                                            snapshot.data[index].id;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      child: Text(
+                                        !val
+                                            ? snapshot.data[index].name_ar
+                                            : snapshot.data[index].name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Lottie.asset(
+                                  'assets/json/empty.json',
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.4,
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.2,
+                                  fit: BoxFit.fill,
                                 ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                      else {
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                  child: Text(
+                                    'noData'.tr(),
+                                    style: TextStyle(fontSize: 16),
+                                  )),
+                            ],
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text('Error : ${snapshot.error}');
+                      } else {
                         return new Center(
-                          child: Container(
-                              child: Text("No data found")
-                          ),
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
-                    else if (snapshot.hasError) {
-                      return Text('Error : ${snapshot.error}');
-                    } else {
-                      return new Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),),
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 )
@@ -424,7 +567,8 @@ class _AddPropertyState extends State<AddProperty> {
       },
     );
   }
-  Future<void> _showAreaDailog() async {
+
+  Future<void> _showAreaDailog(bool val) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -438,65 +582,132 @@ class _AddPropertyState extends State<AddProperty> {
           insetAnimationDuration: const Duration(seconds: 1),
           insetAnimationCurve: Curves.fastOutSlowIn,
           elevation: 2,
-
           child: Container(
-            height: MediaQuery.of(context).size.height*0.4,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30)
-            ),
+            height: MediaQuery.of(context).size.height * 0.4,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: Text("Area",textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: Text(
+                          'areaSelect'.tr(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Expanded(child: FutureBuilder<List<LocationModel>>(
-                  future: getAreaList(),
-                  builder: (context,snapshot){
-                    if (snapshot.hasData) {
-                      if (snapshot.data != null && snapshot.data.length>0) {
-                        return Container(
-                          margin: EdgeInsets.all(10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context,int index){
-                              return GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    areaController.text=snapshot.data[index].name;
-                                    selectedAreaAR=snapshot.data[index].name_ar;
-                                    selectedAreaId=snapshot.data[index].id;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.all(5),
-                                  child: Text(snapshot.data[index].name,textAlign: TextAlign.center,style: TextStyle(fontSize: 16,color:Colors.black),),
+                Expanded(
+                  child: FutureBuilder<List<LocationModel>>(
+                    future: getAreaList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data != null && snapshot.data.length > 0) {
+                          return Container(
+                              margin: EdgeInsets.all(10),
+                              child: Scrollbar(
+                                controller: _scrollController,
+                                isAlwaysShown:
+                                snapshot.data.length > 3 ? true : false,
+                                child: ListView.separated(
+                                  controller: _scrollController,
+                                  separatorBuilder: (context, index) {
+                                    return Divider(
+                                      color: Colors.grey,
+                                    );
+                                  },
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          !val
+                                              ? selectedAreaName =
+                                              snapshot.data[index].name_ar
+                                              : selectedAreaName =
+                                              snapshot.data[index].name;
+                                          engArea = snapshot.data[index].name;
+                                          arArea = snapshot.data[index].name_ar;
+                                          selectedAreaId =
+                                              snapshot.data[index].id;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.all(5),
+                                        child: Text(
+                                          !val
+                                              ? snapshot.data[index].name_ar
+                                              : snapshot.data[index].name,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                      else {
+                              ));
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Lottie.asset(
+                                  'assets/json/empty.json',
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.4,
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.2,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                  child: Text(
+                                    'noData'.tr(),
+                                    style: TextStyle(fontSize: 16),
+                                  )),
+                            ],
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text('Error : ${snapshot.error}');
+                      } else {
                         return new Center(
-                          child: Container(
-                              child: Text("No data found")
-                          ),
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
-                    else if (snapshot.hasError) {
-                      return Text('Error : ${snapshot.error}');
-                    } else {
-                      return new Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),),
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 )
@@ -507,7 +718,8 @@ class _AddPropertyState extends State<AddProperty> {
       },
     );
   }
-  Future<void> _showTypeDailog() async {
+
+  Future<void> _showTypeDailog(bool val) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -530,56 +742,98 @@ class _AddPropertyState extends State<AddProperty> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: Text("Property Type",textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color:Colors.black,fontWeight: FontWeight.w600),),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: Text('propertyType'.tr(),textAlign: TextAlign.center,style: TextStyle(fontSize: 25,color:Colors.black,fontWeight: FontWeight.w600),),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(Icons.close,color: Colors.grey,),
+                          onPressed: ()=>Navigator.pop(context),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Expanded(child: FutureBuilder<List<LocationModel>>(
-                  future: getTypeList(),
-                  builder: (context,snapshot){
-                    if (snapshot.hasData) {
-                      if (snapshot.data != null && snapshot.data.length>0) {
-                        return Container(
-                          margin: EdgeInsets.all(10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context,int index){
-                              return GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    typeController.text=snapshot.data[index].name;
-                                    selectedTypeAR=snapshot.data[index].name_ar;
-                                    selectedTypeId=snapshot.data[index].id;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.all(5),
-                                  child: Text(snapshot.data[index].name,textAlign: TextAlign.center,style: TextStyle(fontSize: 16,color:Colors.black),),
+
+                Expanded(
+                  child: FutureBuilder<List<LocationModel>>(
+                    future: getTypeList(),
+                    builder: (context,snapshot){
+                      if (snapshot.hasData) {
+                        if (snapshot.data != null && snapshot.data.length>0) {
+                          return Container(
+                              margin: EdgeInsets.all(10),
+                              child: Scrollbar(
+
+                                controller: _scrollController,
+                                isAlwaysShown: snapshot.data.length>3?true:false,
+                                child: ListView.separated(
+                                  controller: _scrollController,
+                                  separatorBuilder: (context, index) {
+                                    return Divider(color: Colors.grey,);
+                                  },
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (BuildContext context,int index){
+                                    return GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                          !val?selectedTypeName=snapshot.data[index].name_ar:selectedTypeName=snapshot.data[index].name;
+                                          engType=snapshot.data[index].name;
+                                          arType=snapshot.data[index].name_ar;
+                                          selectedTypeId=snapshot.data[index].id;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.all(5),
+                                        child: Text(!val?snapshot.data[index].name_ar:snapshot.data[index].name,textAlign: TextAlign.center,style: TextStyle(fontSize: 16,color:Colors.black),),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        );
+                              )
+                          );
+                        }
+                        else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Lottie.asset(
+                                  'assets/json/empty.json',
+                                  width: MediaQuery.of(context).size.width*0.4,
+                                  height: MediaQuery.of(context).size.height*0.2,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              Container(
+                                  child: Text('noData'.tr(),style: TextStyle(fontSize: 16),)
+                              ),
+                            ],
+                          );
+                        }
                       }
-                      else {
+                      else if (snapshot.hasError) {
+                        return Text('Error : ${snapshot.error}');
+                      } else {
                         return new Center(
-                          child: Container(
-                              child: Text("No data found")
-                          ),
+                          child: CircularProgressIndicator(),
                         );
                       }
-                    }
-                    else if (snapshot.hasError) {
-                      return Text('Error : ${snapshot.error}');
-                    } else {
-                      return new Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                )),
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 )
@@ -1240,7 +1494,7 @@ class _AddPropertyState extends State<AddProperty> {
                           controller: countryController,
                           readOnly: true,
                           onTap: (){
-                            _showCountryDailog();
+                            _showCountryDailog(lang);
                           },
                           decoration: InputDecoration(hintText:"selectCountry".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
@@ -1265,7 +1519,7 @@ class _AddPropertyState extends State<AddProperty> {
                           controller: cityController,
                           readOnly: true,
                           onTap: (){
-                            _showCityDailog();
+                            _showCityDailog(lang);
                           },
                           decoration: InputDecoration(hintText:"selectCity".tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
@@ -1274,7 +1528,7 @@ class _AddPropertyState extends State<AddProperty> {
                 TableRow(
                     children: [
                       Container(
-                        child: Text('area'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
+                        child: Text('areaAdd'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w600),),
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5),
                       ),
@@ -1290,7 +1544,7 @@ class _AddPropertyState extends State<AddProperty> {
                           controller: areaController,
                           readOnly: true,
                           onTap: (){
-                            _showAreaDailog();
+                            _showAreaDailog(lang);
                           },
                           decoration: InputDecoration(hintText:'selectArea'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
@@ -1315,7 +1569,7 @@ class _AddPropertyState extends State<AddProperty> {
                           readOnly: true,
                           controller: typeController,
                           onTap: (){
-                            _showTypeDailog();
+                            _showTypeDailog(lang);
                           },
                           decoration: InputDecoration(hintText:'selectType'.tr(),contentPadding: EdgeInsets.only(left: 10), border: InputBorder.none,),
                         ),
@@ -1504,8 +1758,7 @@ class _AddPropertyState extends State<AddProperty> {
       )
     );
   }
-  Future getNotificationUser ()async
-  {
+  Future getNotificationUser ()async  {
     String category ;
     isRent ? category = "rent" : category = "buy" ;
     final databaseReference = FirebaseDatabase.instance.reference();

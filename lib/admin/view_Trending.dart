@@ -213,20 +213,15 @@ class _ViewTrendingState extends State<ViewTrending> {
                                                     ),
                                                   ),
 
-                                                  Container(
-                                                      padding: EdgeInsets.all(10),
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(snapshot.data[index].title,maxLines: 1,style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.w500
+                                                   Expanded(
+                                                     child: Container(
+                                                          padding: EdgeInsets.all(10),
+                                                          child: Text(snapshot.data[index].title,style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight: FontWeight.w500
                                                           ),),
-
-
-                                                        ],
-                                                      )
-                                                  ),
+                                                      ),
+                                                   ),
                                                 ],
                                               ),
                                             ),

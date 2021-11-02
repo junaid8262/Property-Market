@@ -228,51 +228,68 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
               children: [
                 Container(
                   height: 250,
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) {
-                            return ImagePreview(widget._property.image,indexImageMyProperty);
-                          }));
-                    },
-                    child: ImageSlideshow(
 
-                      /// Width of the [ImageSlideshow].
-                      width: double.infinity,
-
-
-                      /// The page to show when first creating the [ImageSlideshow].
-                      initialPage: 0,
-
-                      /// The color to paint the indicator.
-                      indicatorColor: Colors.blue,
-
-                      /// The color to paint behind th indicator.
-                      indicatorBackgroundColor: Colors.white,
-
-
-                      /// The widgets to display in the [ImageSlideshow].
-                      /// Add the sample image file into the images folder
-                      children: slideShowWidget,
-
-                      /// Called whenever the page in the center of the viewport changes.
-                      onPageChanged: (value) {
-                        setState(() {
-                          indexImageMyProperty = value;
-                        });
-                        print('Page changed: $value');
+                  child : InkWell(
+                      onTap: (){
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) {
+                              return ImagePreview(widget._property.image,indexImageMyProperty);
+                            }));
                       },
+                      child:  Stack(
+                        children: [
+                          Expanded(
+                            child: ImageSlideshow(
+                              /// Width of the [ImageSlideshow].
+                              width: double.infinity,
+                              height: double.infinity,
 
-                      /// Auto scroll interval.
-                      /// Do not auto scroll with null or 0.
-                      autoPlayInterval: 10000,
-                    ),
+
+                              /// The page to show when first creating the [ImageSlideshow].
+                              initialPage: 0,
+
+                              /// The color to paint the indicator.
+                              indicatorColor: Colors.blue,
+
+                              /// The color to paint behind th indicator.
+                              indicatorBackgroundColor: Colors.white,
+
+
+                              /// The widgets to display in the [ImageSlideshow].
+                              /// Add the sample image file into the images folder
+                              children: slideShowWidget,
+
+                              /// Called whenever the page in the center of the viewport changes.
+                              onPageChanged: (value) {
+                                setState(() {
+                                  indexImageMyProperty = value;
+                                });
+                                print('Page changed: $value');
+                              },
+
+                              /// Auto scroll interval.
+                              /// Do not auto scroll with null or 0.
+                              autoPlayInterval: 1000000,
+                            ),
+                          ),
+                          Positioned(
+                            right : 10 ,
+                            bottom: 10,
+                            child: Container(
+                                height: 60,
+                                width: 100,
+                                child:Image.asset("assets/images/watermark.jpeg")),
+                          ),
+                        ],
+                      )
+
+
                   ),
+
                 ),
 
 
                 Container(
-                  height: 50,
                   alignment: Alignment.center,
                   color: Colors.grey[200],
                   child: Text(widget.lang?widget._property.name:widget._property.name_ar,style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),),

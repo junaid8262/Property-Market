@@ -247,7 +247,6 @@ class _AddTrendingState extends State<AddTrending> {
                           children: [
                             Container(
                               child: TextFormField(
-                                maxLength: 30,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter some text';
@@ -262,7 +261,6 @@ class _AddTrendingState extends State<AddTrending> {
                             Divider(color: Colors.grey[600],),
                             Container(
                               child: TextFormField(
-                                maxLength: 30,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter some text';
