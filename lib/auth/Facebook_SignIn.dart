@@ -41,7 +41,7 @@ class _FacebookSignInState extends State<FacebookSignIn> {
               'email': FirebaseAuth.instance.currentUser.email,
               'username' : FirebaseAuth.instance.currentUser.displayName,
               'profile': FirebaseAuth.instance.currentUser.photoURL,
-            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())));
+            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar(0))));
 
           });
         });

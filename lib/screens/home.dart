@@ -1110,7 +1110,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                   },
                   child: Container(
                     alignment: Alignment.center,
-                    height: 60,
+                    height: 47,
                     width: double.maxFinite,
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -1129,6 +1129,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                     child: Text('findProperty'.tr(),textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 20),),
                   ),
                 ),
+
               ],
             ),
           )
@@ -1181,7 +1182,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                     SharedPref sharedPref=new SharedPref();
                     sharedPref.setPref(false);
                     Navigator.pushReplacement(context, new MaterialPageRoute(
-                        builder: (context) => BottomBar()));
+                        builder: (context) => BottomBar(0)));
                   },
                   title: Text('arabic'.tr()),
                 ),
@@ -1191,7 +1192,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver {
                     SharedPref sharedPref=new SharedPref();
                     sharedPref.setPref(true);
                     Navigator.pushReplacement(context, new MaterialPageRoute(
-                        builder: (context) => BottomBar()));
+                        builder: (context) => BottomBar(0)));
                   },
                   title: Text("English"),
                 ),

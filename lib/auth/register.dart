@@ -181,7 +181,7 @@ class _RegisterState extends State<Register> {
                                               'profile': photoUrl,
                                             }).then((value) {
 
-                                              Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar()));
+                                              Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar(0)));
                                             });
 
                                           });

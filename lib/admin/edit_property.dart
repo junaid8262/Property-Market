@@ -1541,9 +1541,12 @@ class _EditPropertyState extends State<EditProperty> {
       body: jsonEncode(
         <String, dynamic>{
           'notification': <String, dynamic>{
-            'body': 'The Property Type You Have Asked For Is Added',
+            'body': 'New Property Added',
+            "sound" : "default",
+            'title': 'New property added in ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}'
+/*            'body': 'The Property Type You Have Asked For Is Added',
             'title': 'Your Wish list Property Is Added',
-            "sound" : "default"
+            "sound" : "default"*/
           },
           'priority': 'high',
           'data': <String, dynamic>{

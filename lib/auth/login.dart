@@ -167,7 +167,7 @@ class _LoginState extends State<Login> {
                                   }
                                   else{
                                   pr.hide(),
-                                  Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())),
+                                  Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar(0))),
 
                                   }
 

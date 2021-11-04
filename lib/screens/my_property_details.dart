@@ -34,7 +34,7 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
   }
 
   IconData _iconData=Icons.favorite_border;
-  Color _color=Colors.white;
+  Color _color=Colors.black54;
   bool isFavourite = false;
   List<Widget> slideShowWidget=[];
 
@@ -149,7 +149,7 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
       databaseReference.child("favourites").child(user.uid).child(widget._property.id).remove().then((value) {
         setState(() {
           _iconData=Icons.favorite_border;
-          _color=Colors.white;
+          _color=Colors.black54;
           isFavourite=false;
           pr.hide();
         });
@@ -198,6 +198,10 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
         'country_ar': widget._property.country_ar,
         'area_ar': widget._property.area_ar,
         'typeOfProperty_ar': widget._property.typeOfProperty_ar,
+        'price_ar' : widget._property.price_ar,
+        'price_en' : widget._property.price_en,
+        'coverImage' : widget._property.coverImage,
+        'propertyCategoryAr' :widget._property.propertyCategoryAr
 
       }).then((value) {
         setState(() {
@@ -292,7 +296,10 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
                 Container(
                   alignment: Alignment.center,
                   color: Colors.grey[200],
-                  child: Text(widget.lang?widget._property.name:widget._property.name_ar,style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(child: Text(widget.lang?widget._property.name:widget._property.name_ar,style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),)),
+                  ),
                 ),
                 Container(color: Colors.grey[300],height: 3,),
                 SizedBox(height: 10,),

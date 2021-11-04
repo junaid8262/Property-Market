@@ -160,7 +160,7 @@ class MenuDrawerState extends State<MenuDrawer> {
           InkWell(
             onTap: () {
               Navigator.pushReplacement(context, new MaterialPageRoute(
-                  builder: (context) => BottomBar()));
+                  builder: (context) => BottomBar(0)));
             },
             child: Container(
               alignment: Alignment.center,
@@ -287,7 +287,7 @@ class MenuDrawerState extends State<MenuDrawer> {
                 _signOut().then((value) {
                  // sp.setIsLogin(false);
                   Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => BottomBar()));
+                      builder: (context) => BottomBar(0)));
                 });
               }
               else

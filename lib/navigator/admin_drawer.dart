@@ -474,7 +474,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => BottomBar()));
+                        builder: (BuildContext context) => BottomBar(0)));
               });
 
 

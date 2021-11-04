@@ -2,14 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:propertymarket/model/location.dart';
 import 'package:propertymarket/model/property.dart';
-import 'package:propertymarket/navigator/menu_drawer.dart';
 import 'package:propertymarket/screens/property_detail.dart';
-import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:propertymarket/widget/property_tile.dart';
-import 'package:toast/toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 class FavouriteList extends StatefulWidget {
 
@@ -44,46 +40,47 @@ class _FavouriteListState extends State<FavouriteList> {
 
         for(var individualKey in KEYS) {
           Property property = new Property(
-              individualKey,
-              DATA[individualKey]['status'],
-              DATA[individualKey]['addPublisherId'],
-              DATA[individualKey]['image'],
-              DATA[individualKey]['name'].toString(),
-              DATA[individualKey]['location'],
-              DATA[individualKey]['country'],
-              DATA[individualKey]['city'],
-              DATA[individualKey]['area'],
-              DATA[individualKey]['typeOfProperty'],
-              DATA[individualKey]['propertyCategory'],
-              DATA[individualKey]['whatsapp'].toString(),
-              DATA[individualKey]['call'].toString(),
-              DATA[individualKey]['email'],
-              DATA[individualKey]['beds'].toString(),
-              DATA[individualKey]['bath'].toString(),
-              DATA[individualKey]['measurementArea'].toString(),
-              DATA[individualKey]['datePosted'],
-              DATA[individualKey]['description'],
-              DATA[individualKey]['numericalPrice'],
-              DATA[individualKey]['payment'],
-              DATA[individualKey]['furnish'],
-              DATA[individualKey]['agentName'],
-              DATA[individualKey]['sponsered'],
-              DATA[individualKey]['floor'],
-              DATA[individualKey]['serial'],
-              DATA[individualKey]['name_ar'],
-              DATA[individualKey]['agentName_ar'],
-              DATA[individualKey]['area_ar'],
-              DATA[individualKey]['city_ar'],
-              DATA[individualKey]['country_ar'],
-              DATA[individualKey]['description_ar'],
-              DATA[individualKey]['furnish_ar'],
-              DATA[individualKey]['payment_ar'],
-              DATA[individualKey]['typeOfProperty_ar'],
-              DATA[individualKey]['propertyCategoryAr'],
+            individualKey,
+            DATA[individualKey]['status'],
+            DATA[individualKey]['addPublisherId'],
+            DATA[individualKey]['image'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['location'],
+            DATA[individualKey]['country'],
+            DATA[individualKey]['city'],
+            DATA[individualKey]['area'],
+            DATA[individualKey]['typeOfProperty'],
+            DATA[individualKey]['propertyCategory'],
+            DATA[individualKey]['whatsapp'].toString(),
+            DATA[individualKey]['call'].toString(),
+            DATA[individualKey]['email'],
+            DATA[individualKey]['beds'].toString(),
+            DATA[individualKey]['bath'].toString(),
+            DATA[individualKey]['measurementArea'].toString(),
+            DATA[individualKey]['datePosted'],
+            DATA[individualKey]['description'],
+            DATA[individualKey]['numericalPrice'],
+            DATA[individualKey]['payment'],
+            DATA[individualKey]['furnish'],
+            DATA[individualKey]['agentName'],
+            DATA[individualKey]['sponsered'],
+            DATA[individualKey]['floor'],
+            DATA[individualKey]['serial'],
+            DATA[individualKey]['name_ar'],
+            DATA[individualKey]['agentName_ar'],
+            DATA[individualKey]['area_ar'],
+            DATA[individualKey]['city_ar'],
+            DATA[individualKey]['country_ar'],
+            DATA[individualKey]['description_ar'],
+            DATA[individualKey]['furnish_ar'],
+            DATA[individualKey]['payment_ar'],
+            DATA[individualKey]['typeOfProperty_ar'],
+            DATA[individualKey]['propertyCategoryAr'],
             DATA[individualKey]['price_en'],
             DATA[individualKey]['price_ar'],
           );
           list.add(property);
+
 
 
         }

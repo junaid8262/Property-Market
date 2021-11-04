@@ -9,7 +9,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:propertymarket/model/location.dart';
+import 'package:propertymarket/navigator/bottom_navigation.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:toast/toast.dart';
@@ -122,9 +124,13 @@ class _AddPropertyState extends State<AddProperty> {
   final phoneController=TextEditingController();
   final emailController=TextEditingController();
   final countryController=TextEditingController();
+  final countryControllert=TextEditingController();
   final cityController=TextEditingController();
+  final cityControllert=TextEditingController();
   final areaController=TextEditingController();
+  final areaControllert=TextEditingController();
   final typeController=TextEditingController();
+  final typeControllert=TextEditingController();
   final descriptionController=TextEditingController();
   final paymentController=TextEditingController();
   final furnishController=TextEditingController();
@@ -346,9 +352,11 @@ class _AddPropertyState extends State<AddProperty> {
                                     onTap: () {
                                       setState(() {
                                         !val
-                                            ? selectedCountryName =snapshot.data[index].name_ar
-                                            : selectedCountryName =snapshot.data[index].name;
+                                            ?  countryControllert.text  = snapshot.data[index].name_ar
+                                            : countryControllert.text = snapshot.data[index].name ;
 
+                                        selectedCountryAR = snapshot.data[index].name_ar;
+                                        countryController.text = snapshot.data[index].name ;
                                         engCountry = snapshot.data[index].name;
                                         arCountry = snapshot.data[index].name_ar;
                                         selectedCountryId =
@@ -495,10 +503,11 @@ class _AddPropertyState extends State<AddProperty> {
                                     onTap: () {
                                       setState(() {
                                         !val
-                                            ? selectedCityName =
-                                            snapshot.data[index].name_ar
-                                            : selectedCityName =
-                                            snapshot.data[index].name;
+                                            ?  cityControllert.text  = snapshot.data[index].name_ar
+                                            : cityControllert.text = snapshot.data[index].name ;
+
+                                        selectedCityAR = snapshot.data[index].name_ar;
+                                        cityController.text = snapshot.data[index].name ;
                                         engCity = snapshot.data[index].name;
                                         arCity = snapshot.data[index].name_ar;
                                         selectedCityId =
@@ -646,10 +655,11 @@ class _AddPropertyState extends State<AddProperty> {
                                       onTap: () {
                                         setState(() {
                                           !val
-                                              ? selectedAreaName =
-                                              snapshot.data[index].name_ar
-                                              : selectedAreaName =
-                                              snapshot.data[index].name;
+                                              ?  areaControllert.text  = snapshot.data[index].name_ar
+                                              : areaControllert.text = snapshot.data[index].name ;
+
+                                          selectedAreaAR = snapshot.data[index].name_ar;
+                                          areaController.text = snapshot.data[index].name ;
                                           engArea = snapshot.data[index].name;
                                           arArea = snapshot.data[index].name_ar;
                                           selectedAreaId =
@@ -787,7 +797,12 @@ class _AddPropertyState extends State<AddProperty> {
                                     return GestureDetector(
                                       onTap: (){
                                         setState(() {
-                                          !val?selectedTypeName=snapshot.data[index].name_ar:selectedTypeName=snapshot.data[index].name;
+                                          !val?
+                                          typeControllert.text  = snapshot.data[index].name_ar
+                                              : typeControllert.text = snapshot.data[index].name ;
+
+                                          selectedTypeAR = snapshot.data[index].name_ar ;
+                                          typeController.text = snapshot.data[index].name ;
                                           engType=snapshot.data[index].name;
                                           arType=snapshot.data[index].name_ar;
                                           selectedTypeId=snapshot.data[index].id;
@@ -903,9 +918,13 @@ class _AddPropertyState extends State<AddProperty> {
 
           if (await interstitialAd.isLoaded) {
             interstitialAd.show();
+            Navigator.pushReplacement(context, new MaterialPageRoute(
+                builder: (context) => BottomBar(5)));
             Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
           }
           else {
+            Navigator.pushReplacement(context, new MaterialPageRoute(
+                builder: (context) => BottomBar(5)));
             Toast.show("Submitted", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
           }
         }
@@ -1491,7 +1510,7 @@ class _AddPropertyState extends State<AddProperty> {
                             }
                             return null;
                           },
-                          controller: countryController,
+                          controller: countryControllert,
                           readOnly: true,
                           onTap: (){
                             _showCountryDailog(lang);
@@ -1516,7 +1535,7 @@ class _AddPropertyState extends State<AddProperty> {
                             }
                             return null;
                           },
-                          controller: cityController,
+                          controller: cityControllert,
                           readOnly: true,
                           onTap: (){
                             _showCityDailog(lang);
@@ -1541,7 +1560,7 @@ class _AddPropertyState extends State<AddProperty> {
                             }
                             return null;
                           },
-                          controller: areaController,
+                          controller: areaControllert,
                           readOnly: true,
                           onTap: (){
                             _showAreaDailog(lang);
@@ -1567,7 +1586,7 @@ class _AddPropertyState extends State<AddProperty> {
                             return null;
                           },
                           readOnly: true,
-                          controller: typeController,
+                          controller: typeControllert,
                           onTap: (){
                             _showTypeDailog(lang);
                           },
@@ -1793,9 +1812,12 @@ class _AddPropertyState extends State<AddProperty> {
       body: jsonEncode(
         <String, dynamic>{
           'notification': <String, dynamic>{
-            'body': 'The Property Type You Have Asked For Is Added',
+            'body': 'New Property Added',
+            "sound" : "default",
+            'title': 'New property added in ${areaController.text}, ${cityController.text}, ${countryController.text} at ${enpriceController.text}'
+           /* 'body': 'The Property Type You Have Asked For Is Added',
             'title': 'Your Wish list Property Is Added',
-            "sound" : "default"
+            "sound" : "default"*/
           },
           'priority': 'high',
           'data': <String, dynamic>{

@@ -107,13 +107,13 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                     sharedPref.setFirstTimePref(false);
                     FirebaseAuth.instance.authStateChanges().listen((User user) {
                       if (user == null) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar(0)));
                       } else {
                         if(user.uid==adminId){
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => AdminSearchList()));
                         }
                         else
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar()));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomBar(0)));
 
                       }
                     });

@@ -30,7 +30,7 @@ class _GoogleSigninState extends State<GoogleSignin> {
               'email': user.email,
               'username' : user.displayName,
               'profile': user.photoURL,
-            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar())));
+            }).then((value) => Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: BottomBar(0))));
 
           });
         });

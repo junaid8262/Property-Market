@@ -10,15 +10,16 @@ import 'package:propertymarket/model/info.dart';
 import 'package:propertymarket/screens/My_Chats.dart';
 import 'package:propertymarket/screens/Notify.dart';
 import 'package:propertymarket/screens/Trending.dart';
-import 'package:propertymarket/screens/favourites.dart';
 import 'package:propertymarket/screens/home.dart';
 import 'package:propertymarket/screens/news.dart';
 import 'package:propertymarket/values/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:propertymarket/values/shared_prefs.dart';
 import 'package:badges/badges.dart';
 
 class BottomBar extends StatefulWidget {
+  int index;
+
+  BottomBar(this.index);
 
   @override
   _BottomNavigationState createState() => new _BottomNavigationState();
@@ -27,7 +28,7 @@ class BottomBar extends StatefulWidget {
 class _BottomNavigationState extends State<BottomBar>{
 
 
-  int _currentIndex = 0;
+  int _currentIndex   ;
 
   List<Widget> _children=[];
   Future<MyInformation> getSlideList() async {
@@ -187,6 +188,7 @@ class _BottomNavigationState extends State<BottomBar>{
   var lang ;
   @override
   void initState() {
+    _currentIndex = widget.index;
     super.initState();
 
     _children = [
