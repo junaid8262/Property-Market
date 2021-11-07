@@ -436,7 +436,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   void dispose() {
     videoPlayerController.dispose();
-    //    widget.videoPlayerController.dispose();
+   //_chewieController.dispose();
     super.dispose();
   }
 

@@ -1751,10 +1751,10 @@ class _NotifyState extends State<Notify> {
 
     databaseReference.child("userNotification").push().set({
       'userid': user.uid.toString(),
-      'country': selectedCountryName,
-      'city': selectedCityName,
-      'area': selectedAreaName,
-      'type' : selectedTypeName,
+      'country': engCountry,
+      'city': engCity,
+      'area': engArea,
+      'type' : engType,
       'propertyCategory': isRent ? "rent" : "buy",
       'country_ar': arCountry,
       'city_ar': arCity,
