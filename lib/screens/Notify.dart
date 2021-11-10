@@ -392,6 +392,7 @@ class _NotifyState extends State<Notify> {
                                             IconButton(
                                                 onPressed:
                                                     () async {
+                                                  print ("Notificaotin id is : ${snapshot.data[index].notificationId}");
                                                   FirebaseDatabase
                                                       .instance
                                                       .reference()
@@ -407,7 +408,7 @@ class _NotifyState extends State<Notify> {
                                                         value) {
                                                       FirebaseDatabase.instance.reference().child('userNotification').child(key).remove();
                                                     });
-                                                  }).whenComplete(() {
+                                                  }).then((value) {
                                                     setState(
                                                             () {});
                                                   });
@@ -1790,7 +1791,7 @@ class _NotifyState extends State<Notify> {
                   DATA[individualKey]['area_ar'],
                   DATA[individualKey]['type_ar'],
                   DATA[individualKey]['propertyCategoryAr'],
-                  DATA[individualKey]['notificationId_ar'],
+                  DATA[individualKey]['notificationId'],
               );
           if (DATA[individualKey]['userid'] == userid) {
             list.add(userNotificationModel);

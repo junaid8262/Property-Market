@@ -242,40 +242,40 @@ class _MyPropertyDetailState extends State<MyPropertyDetail> {
                       },
                       child:  Stack(
                         children: [
-                          Expanded(
-                            child: ImageSlideshow(
-                              /// Width of the [ImageSlideshow].
-                              width: double.infinity,
-                              height: double.infinity,
+                           Container(
+                              child: ImageSlideshow(
+                                /// Width of the [ImageSlideshow].
+                                width: double.infinity,
+                                height: double.infinity,
 
 
-                              /// The page to show when first creating the [ImageSlideshow].
-                              initialPage: 0,
+                                /// The page to show when first creating the [ImageSlideshow].
+                                initialPage: 0,
 
-                              /// The color to paint the indicator.
-                              indicatorColor: Colors.blue,
+                                /// The color to paint the indicator.
+                                indicatorColor: Colors.blue,
 
-                              /// The color to paint behind th indicator.
-                              indicatorBackgroundColor: Colors.white,
+                                /// The color to paint behind th indicator.
+                                indicatorBackgroundColor: Colors.white,
 
 
-                              /// The widgets to display in the [ImageSlideshow].
-                              /// Add the sample image file into the images folder
-                              children: slideShowWidget,
+                                /// The widgets to display in the [ImageSlideshow].
+                                /// Add the sample image file into the images folder
+                                children: slideShowWidget,
 
-                              /// Called whenever the page in the center of the viewport changes.
-                              onPageChanged: (value) {
-                                setState(() {
-                                  indexImageMyProperty = value;
-                                });
-                                print('Page changed: $value');
-                              },
+                                /// Called whenever the page in the center of the viewport changes.
+                                onPageChanged: (value) {
+                                  setState(() {
+                                    indexImageMyProperty = value;
+                                  });
+                                  print('Page changed: $value');
+                                },
 
-                              /// Auto scroll interval.
-                              /// Do not auto scroll with null or 0.
-                              autoPlayInterval: 1000000,
+                                /// Auto scroll interval.
+                                /// Do not auto scroll with null or 0.
+                                autoPlayInterval: 1000000,
+                              ),
                             ),
-                          ),
                           Positioned(
                             right : 10 ,
                             bottom: 10,

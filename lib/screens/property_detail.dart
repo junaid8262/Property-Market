@@ -274,7 +274,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                     },
                     child:  Stack(
                       children: [
-                        Expanded(
+                        Container(
                           child: ImageSlideshow(
                             /// Width of the [ImageSlideshow].
                             width: double.infinity,
