@@ -203,6 +203,7 @@ class ChatScreenState extends State<ChatScreen> {
   Future setUser() async {
     return await userDetails.doc(groupChatId).set({
       "id": FieldValue.arrayUnion(bothUser),
+      "time": DateTime.now().millisecondsSinceEpoch.toString()
     });
   }
 

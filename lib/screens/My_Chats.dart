@@ -60,18 +60,20 @@ class _MyChatsState extends State<MyChats> {
             Container(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('users')
+                    .collection('users').orderBy('time')
                     .where(
                   "id",
                   arrayContains: uId,
-                )
-                    .snapshots(),
+                ).snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
+                  print("user Id $uId");
+
                   if (snapshot.hasError) {
+                    print("error ${snapshot.error}");
                     return Center(
                       child: Column(
-                        children: [Text("Something Went Wrong")],
+                        children: [Text("Something Went Wrong ${snapshot.error} ")],
                       ),
                     );
                   }
@@ -212,16 +214,40 @@ class _MyChatsState extends State<MyChats> {
                                         )),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    snapshot.data[index].username,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.grey.shade800,
-                                      fontWeight: FontWeight.w400,
+
+                                    snapshot.data[index].id == adminId ?
+
+                                     Expanded(
+                                       child: Row(
+                                         children: [
+                                            Text(
+                                              snapshot.data[index].username,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.grey.shade800,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                    
+
+                                           Container(
+                                               height: 50,
+                                               width  :50,
+                                               child: Image.asset('assets/images/checkIcon.jpeg')),
+                                         ],
+                                       ),
+                                     ):
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data[index].username,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.grey.shade800,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
+
 
 
 
