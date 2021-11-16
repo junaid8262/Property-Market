@@ -60,11 +60,11 @@ class _MyChatsState extends State<MyChats> {
             Container(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('users').orderBy('time')
+                    .collection('users')
                     .where(
                   "id",
                   arrayContains: uId,
-                ).snapshots(),
+                ).orderBy('time',descending: true).snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   print("user Id $uId");
@@ -73,7 +73,7 @@ class _MyChatsState extends State<MyChats> {
                     print("error ${snapshot.error}");
                     return Center(
                       child: Column(
-                        children: [Text("Something Went Wrong ${snapshot.error} ")],
+                        children: [SelectableText("Something Went Wrong . ")],
                       ),
                     );
                   }
