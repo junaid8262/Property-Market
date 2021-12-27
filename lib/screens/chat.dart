@@ -1043,12 +1043,19 @@ class ChatScreenState extends State<ChatScreen> {
                     isRecording = true;
                   });
                 },
+
+
                 onLongPressEnd: (details) {
                   stopRecord();
                   setState(() {
                     isRecording = false;
                   });
                 },
+
+
+
+
+
                 child: Container(
                     padding: EdgeInsets.all(6),
                     child: Icon(
